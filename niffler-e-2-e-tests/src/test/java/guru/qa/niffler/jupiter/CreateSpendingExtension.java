@@ -33,7 +33,7 @@ public class CreateSpendingExtension implements BeforeEachCallback {
               anno.username()
           );
 
-          SpendJson created = spendApiClient.addSpend(spendJson);
+          SpendJson created = spendApiClient.createSpend(spendJson);
           context.getStore(NAMESPACE).put(context.getUniqueId(), created);
         });
   }

@@ -19,7 +19,7 @@ public class SpendingTest {
   @Spend(
       username = "duck",
       category = "Обучение",
-      description = "Обучение Niffler 2.0",
+      description = "Обучение Niffler NG",
       amount = 89000.00,
       currency = CurrencyValues.RUB
   )
@@ -28,7 +28,7 @@ public class SpendingTest {
     final String newDescription = "Обучение Niffler NG";
 
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .doLogin("duck", "12345")
+        .doLogin("vladzag", "QAGURU")
         .editSpending(spend.description())
         .editDescription(newDescription);
 
