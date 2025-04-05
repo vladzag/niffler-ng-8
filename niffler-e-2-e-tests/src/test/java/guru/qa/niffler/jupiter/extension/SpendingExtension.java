@@ -2,6 +2,7 @@ package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.api.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.Spend;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
@@ -20,21 +21,21 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
 
   @Override
   public void beforeEach(ExtensionContext context) {
-    AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Spend.class)
-        .ifPresent(anno -> {
+    AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
+        .ifPresent(userAnnotation -> {
           SpendJson spendJson = new SpendJson(
               null,
               new Date(),
               new CategoryJson(
                   null,
-                  anno.category(),
-                  anno.username(),
+                      userAnnotation.spendings()[0].category(),
+                      userAnnotation.username(),
                   false
               ),
-              anno.currency(),
-              anno.amount(),
-              anno.description(),
-              anno.username()
+                  userAnnotation.spendings()[0].currency(),
+                  userAnnotation.spendings()[0].amount(),
+                  userAnnotation.spendings()[0].description(),
+                  userAnnotation.username()
           );
 
           SpendJson created = spendApiClient.addSpend(spendJson);
