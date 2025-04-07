@@ -7,6 +7,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class LoginPage {
 
+
     private final SelenideElement usernameInput = $("input[name='username']");
     private final SelenideElement passwordInput = $("input[name='password']");
     private final SelenideElement submitButton = $("button[type='submit']");
@@ -33,4 +34,3 @@ public class LoginPage {
         errorContainer.shouldHave(text(error));
         return this;
     }
-}

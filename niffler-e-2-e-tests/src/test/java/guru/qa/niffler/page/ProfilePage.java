@@ -13,6 +13,7 @@ import static com.codeborne.selenide.Selenide.$$;
 
 public class ProfilePage {
 
+
     private final SelenideElement avatar = $("#image__input").parent().$("img");
     private final SelenideElement userName = $("#username");
     private final SelenideElement nameInput = $("#name");

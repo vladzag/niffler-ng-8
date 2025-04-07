@@ -9,6 +9,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class MainPage {
 
+
     private final SelenideElement header = $("#root header");
     private final SelenideElement headerMenu = $("ul[role='menu']");
     private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");

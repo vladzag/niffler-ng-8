@@ -8,6 +8,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class FriendsPage {
 
+
     private final SelenideElement peopleTab = $("a[href='/people/friends']");
     private final SelenideElement allTab = $("a[href='/people/all']");
     private final SelenideElement requestsTable = $("#requests");
@@ -28,3 +29,4 @@ public class FriendsPage {
         return this;
     }
 }
+

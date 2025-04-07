@@ -4,7 +4,9 @@ import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import retrofit2.Call;
+
 import retrofit2.http.*;
+
 
 import java.util.List;
 
@@ -37,4 +39,3 @@ public interface SpendApi {
     @GET("internal/categories/all")
     Call<List<CategoryJson>> allCategories(@Query("username") String username);
 
-}
