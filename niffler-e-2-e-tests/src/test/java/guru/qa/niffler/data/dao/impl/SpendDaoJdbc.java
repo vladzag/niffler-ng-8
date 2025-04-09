@@ -65,7 +65,10 @@ public class SpendDaoJdbc implements SpendDao {
                         se.setCurrency(rs.getObject("currency", guru.qa.niffler.model.CurrencyValues.class));
                         se.setAmount(rs.getDouble("amount"));
                         se.setDescription(rs.getString("description"));
-                        se.setCategory(rs.getObject("category_id", CategoryEntity.class));
+                        UUID categoryId = rs.getObject("category_id", UUID.class);
+                        CategoryEntity categoryEntity = new CategoryEntity();
+                        categoryEntity.setId(categoryId);
+                        se.setCategory(categoryEntity);
                         return Optional.of(
                                 se
                         );
@@ -83,13 +86,13 @@ public class SpendDaoJdbc implements SpendDao {
     public List<SpendEntity> findAllByUsername(String username) {
         try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * FROM spend WHERE ?"
+                    "SELECT * FROM spend WHERE username =?"
             )) {
 
                 ps.setObject(1, username);
                 ps.execute();
                 try (ResultSet rs = ps.getResultSet()) {
-                    if (rs.next()) {
+                    while (rs.next()) {
                         SpendEntity se = new SpendEntity();
                         se.setId(rs.getObject("id", UUID.class));
                         se.setUsername(rs.getString("username"));
@@ -97,15 +100,18 @@ public class SpendDaoJdbc implements SpendDao {
                         se.setCurrency(rs.getObject("currency", guru.qa.niffler.model.CurrencyValues.class));
                         se.setAmount(rs.getDouble("amount"));
                         se.setDescription(rs.getString("description"));
-                        se.setCategory(rs.getObject("category_id", CategoryEntity.class));
+                        UUID categoryId = rs.getObject("category_id", UUID.class);
+                        CategoryEntity categoryEntity = new CategoryEntity();
+                        categoryEntity.setId(categoryId);
+                        se.setCategory(categoryEntity);
                         return List.of(
                                 se
                         );
-                    } else {
-                        return List.of(
-                        );
                     }
+                    return List.of(
+                    );
                 }
+
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);

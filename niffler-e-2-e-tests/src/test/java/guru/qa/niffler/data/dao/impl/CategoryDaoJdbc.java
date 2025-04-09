@@ -82,7 +82,7 @@ public class CategoryDaoJdbc implements CategoryDao {
                 ps.execute();
 
                 try (ResultSet rs = ps.getResultSet()) {
-                    if (rs.next()) {
+                    while (rs.next()) {
                         CategoryEntity ce = new CategoryEntity();
                         ce.setId(rs.getObject("id", UUID.class));
                         ce.setUsername(rs.getString("username"));
@@ -91,9 +91,8 @@ public class CategoryDaoJdbc implements CategoryDao {
                         return Optional.of(
                                 ce
                         );
-                    } else {
-                        return Optional.empty();
                     }
+                    return Optional.empty();
                 }
             }
         } catch (SQLException e) {
@@ -105,15 +104,14 @@ public class CategoryDaoJdbc implements CategoryDao {
     public List<CategoryEntity> findAllByUsername(String username) {
         try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * FROM category WHERE username=?",
-                    PreparedStatement.RETURN_GENERATED_KEYS
+                    "SELECT * FROM category WHERE username=?"
             )) {
                 ps.setObject(1, username);
 
                 ps.execute();
 
                 try (ResultSet rs = ps.getResultSet()) {
-                    if (rs.next()) {
+                    while (rs.next()) {
                         CategoryEntity ce = new CategoryEntity();
                         ce.setId(rs.getObject("id", UUID.class));
                         ce.setUsername(rs.getString("username"));
@@ -122,10 +120,8 @@ public class CategoryDaoJdbc implements CategoryDao {
                         return List.of(
                                 ce
                         );
-                    } else {
-                        return List.of(
-                        );
                     }
+                    return List.of();
                 }
             }
         } catch (SQLException e) {
@@ -138,8 +134,7 @@ public class CategoryDaoJdbc implements CategoryDao {
     public void deleteCategory(CategoryEntity category) {
         try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
-                    "DELETE FROM category WHERE id=?",
-                    PreparedStatement.RETURN_GENERATED_KEYS
+                    "DELETE FROM category WHERE id=?"
             )) {
                 ps.setObject(1, category.getId());
 
@@ -148,5 +143,30 @@ public class CategoryDaoJdbc implements CategoryDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public CategoryEntity update(CategoryEntity category) {
+        try (Connection connection = Databases.connection(CFG.spendJdbcUrl())) {
+            try (PreparedStatement ps = connection.prepareStatement(
+                    "UPDATE category SET name = ?, username = ?, archived = ? WHERE id = ?")) {
+                ps.setString(1, category.getName());
+                ps.setString(2, category.getUsername());
+                ps.setBoolean(3, category.isArchived());
+                ps.setObject(4, category.getId());
+
+                int affectedRows = ps.executeUpdate();
+
+                if (affectedRows == 0) {
+                    throw new SQLException("Updating category failed, no rows affected.");
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating category", e);
+        }
+
+        // Возвращаем обновленную сущность
+        return category;
+
     }
 }

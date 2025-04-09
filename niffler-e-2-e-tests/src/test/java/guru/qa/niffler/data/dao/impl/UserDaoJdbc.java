@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,7 +21,7 @@ public class UserDaoJdbc implements UserDao {
     public UserEntity createUser(UserEntity user) {
         try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO user (username, currency, firstname, surname, photo, photo_small, full_name) " +
+                    "INSERT INTO \"user\" (username, currency, firstname, surname, photo, photo_small, full_name) " +
                             "VALUES (?, ?, ?, ?, ?, ?, ?)",
                     PreparedStatement.RETURN_GENERATED_KEYS
             )) {
@@ -57,7 +56,7 @@ public class UserDaoJdbc implements UserDao {
     @Override
     public Optional<UserEntity> findById(UUID id) {
         try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
-            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM user WHERE ?")) {
+            try (PreparedStatement ps = connection.prepareStatement("SELECT * FROM user WHERE id = ?")) {
                 ps.setObject(1, id);
                 ps.execute();
 
@@ -86,10 +85,10 @@ public class UserDaoJdbc implements UserDao {
     }
 
     @Override
-    public List<UserEntity> findUserByUsername(String username) {
+    public Optional<UserEntity> findUserByUsername(String username) {
         try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
             try (PreparedStatement ps = connection.prepareStatement(
-                    "SELECT * FROM user WHERE ?"
+                    "SELECT * FROM \"user\" WHERE username = ?"
             )) {
                 ps.setObject(1, username);
 
@@ -106,11 +105,11 @@ public class UserDaoJdbc implements UserDao {
                         ue.setPhoto(rs.getBytes("photo"));
                         ue.setPhotoSmall(rs.getBytes("photo_small"));
                         ue.setFullname(rs.getString("full_name"));
-                        return List.of(
+                        return Optional.of(
                                 ue
                         );
                     } else {
-                        return List.of();
+                        return Optional.empty();
                     }
                 }
             }
@@ -123,7 +122,7 @@ public class UserDaoJdbc implements UserDao {
     @Override
     public void delete(UserEntity user) {
         try (Connection connection = Databases.connection(CFG.userdataJdbcUrl())) {
-            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM spend WHERE ?")) {
+            try (PreparedStatement ps = connection.prepareStatement("DELETE FROM spend WHERE id = ?")) {
                 ps.setObject(1, user.getId());
                 ps.executeUpdate();
             }

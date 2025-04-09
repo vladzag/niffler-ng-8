@@ -20,4 +20,11 @@ public class CategoryDbClient {
         );
     }
 
+    public CategoryJson updateCategory(CategoryJson category) {
+        CategoryEntity categoryEntity = CategoryEntity.fromJson(category);
+        CategoryEntity updatedEntity = categoryDao.update(categoryEntity);
+
+        return CategoryJson.fromEntity(updatedEntity);
+    }
+
 }
