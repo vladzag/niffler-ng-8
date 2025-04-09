@@ -27,7 +27,6 @@ public class CategoryExtension implements
   public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
 
   private final CategoryDbClient categoryDbClient = new CategoryDbClient();
-  private final SpendApiClient spendApiClient = new SpendApiClient();
 
   @Override
   public void beforeEach(ExtensionContext context) throws Exception {
@@ -62,7 +61,7 @@ public class CategoryExtension implements
           category.username(),
           true
       );
-      spendApiClient.updateCategory(category);
+      categoryDbClient.updateCategory(category);
     }
   }
 
