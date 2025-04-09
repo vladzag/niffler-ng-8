@@ -22,5 +22,7 @@ public class SpendDbClient {
     return SpendJson.fromEntity(
         spendDao.create(spendEntity)
     );
+
+
   }
 }
