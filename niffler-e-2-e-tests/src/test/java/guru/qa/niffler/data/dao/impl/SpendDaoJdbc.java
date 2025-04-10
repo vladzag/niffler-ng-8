@@ -12,8 +12,6 @@ import java.util.UUID;
 
 public class SpendDaoJdbc implements SpendDao {
 
-    private static final Config CFG = Config.getInstance();
-
     private final Connection connection;
 
     public SpendDaoJdbc(Connection connection) {
@@ -42,11 +40,7 @@ public class SpendDaoJdbc implements SpendDao {
                     generatedKey = rs.getObject("id", UUID.class);
                 } else {
                     throw new SQLException("Can`t find id in ResultSet");
-
-
                 }
-
-
             }
             spend.setId(generatedKey);
             return spend;
