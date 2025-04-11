@@ -58,10 +58,10 @@ public class Databases {
             userTransaction.begin();
             T result = null;
             for (XaFunction<T> action : actions) {
-                try (Connection connection = connection(action.jdbcUrl)) {
-                    connection.setTransactionIsolation(transactionIsolation);
-                    result = action.function.apply(connection(action.jdbcUrl));
-                }
+                Connection connection = connection(action.jdbcUrl))
+                connection.setTransactionIsolation(transactionIsolation);
+                result = action.function.apply(connection(action.jdbcUrl));
+
             }
             userTransaction.commit();
             return result;
@@ -103,10 +103,10 @@ public class Databases {
         try {
             transactionImp.begin();
             for (XaConsumer action : actions) {
-                try (Connection connection = connection(action.jdbcUrl)) {
-                    connection.setTransactionIsolation(transactionIsolation);
-                    action.function.accept(connection(action.jdbcUrl));
-                }
+                Connection connection = connection(action.jdbcUrl))
+                connection.setTransactionIsolation(transactionIsolation);
+                action.function.accept(connection(action.jdbcUrl));
+
             }
             transactionImp.commit();
         } catch (Exception e) {

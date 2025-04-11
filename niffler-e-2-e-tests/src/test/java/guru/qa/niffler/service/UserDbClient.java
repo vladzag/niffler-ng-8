@@ -21,8 +21,8 @@ public class UserDbClient {
     public UserJson createUser(UserJson userJson) {
         XaFunction<UserJson> xaAuthF = new XaFunction<>(
                 connection -> {
-                    AuthUserEntity authUserEntity = new AuthUserDaoJdbc(connection).createPermission(AuthUserEntity.fromJson(userJson));
-                    new AuthAuthorityDaoJdbc(connection).createUser(authUserEntity);
+                    AuthUserEntity authUserEntity = new AuthUserDaoJdbc(connection).сreateUser(AuthUserEntity.fromJson(userJson));
+                    new AuthAuthorityDaoJdbc(connection).createPermission(authUserEntity);
                     return UserJson.fromAuthEntity(authUserEntity);
                 },
                 CFG.authJdbcUrl());

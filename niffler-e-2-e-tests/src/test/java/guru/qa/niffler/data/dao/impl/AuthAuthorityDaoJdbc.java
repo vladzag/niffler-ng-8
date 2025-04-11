@@ -21,7 +21,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     }
 
     @Override
-    public void createUser(AuthUserEntity authUser) {
+    public void createPermission(AuthUserEntity authUser) {
         List<AuthorityEntity> created = new ArrayList<>();
         List<AuthorityEntity> userAuthorities = authUser.getPermissions();
 
