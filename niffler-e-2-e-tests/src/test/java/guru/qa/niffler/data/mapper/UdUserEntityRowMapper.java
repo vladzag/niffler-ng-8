@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public class UdUserEntityRowMapper implements RowMapper<UserEntity> {
 
-  public static final UdUserEntityRowMapper instance = new UdUserEntityRowMapper();
+  public static final UdUserEntityRowMapper INSTANCE = new UdUserEntityRowMapper();
 
   private UdUserEntityRowMapper() {
   }

@@ -1,11 +1,13 @@
 package guru.qa.niffler.data.dao.impl;
 
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.SpendDao;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.data.mapper.SpendEntityRowMapper;
+import guru.qa.niffler.data.templates.DataSources;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import guru.qa.niffler.data.mapper.SpendEntityRowMapper;
 
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
@@ -15,15 +17,12 @@ import java.util.UUID;
 
 public class SpendDaoSpringJdbc implements SpendDao {
 
-    private final DataSource dataSource;
+    private static final Config CFG = Config.getInstance();
 
-    public SpendDaoSpringJdbc(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
 
     @Override
     public SpendEntity create(SpendEntity spend) {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
@@ -48,7 +47,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAll() {
-        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
 
         return jdbcTemplate.query(
                 "SELECT * FROM spend",

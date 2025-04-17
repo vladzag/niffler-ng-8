@@ -4,12 +4,13 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthUserDao;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
+
+import static guru.qa.niffler.data.templates.Connections.holder;
 
 public class AuthUserDaoJdbc implements AuthUserDao {
 

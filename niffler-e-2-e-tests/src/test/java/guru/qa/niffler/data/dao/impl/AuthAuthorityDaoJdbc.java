@@ -3,10 +3,11 @@ package guru.qa.niffler.data.dao.impl;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthAuthorityDao;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
-import static guru.qa.niffler.data.templates.Connections.holder;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+
+import static guru.qa.niffler.data.templates.Connections.holder;
 
 
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {

@@ -9,10 +9,11 @@ import guru.qa.niffler.data.dao.impl.SpendDaoJdbc;
 import guru.qa.niffler.data.dao.impl.SpendDaoSpringJdbc;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
+import guru.qa.niffler.data.templates.DataSources;
 import guru.qa.niffler.data.templates.JdbcTransactionTemplate;
 import guru.qa.niffler.model.SpendJson;
-
-import static guru.qa.niffler.data.templates.DataSources.dataSource;
+import org.springframework.jdbc.support.JdbcTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class SpendDbClient {
 
@@ -20,9 +21,17 @@ public class SpendDbClient {
 
     private final CategoryDao categoryDao = new CategoryDaoJdbc();
     private final SpendDao spendDao = new SpendDaoJdbc();
+    private final CategoryDao categorySpringDao = new CategoryDaoSpringJdbc();
+    private final SpendDao spendSpringDao = new SpendDaoSpringJdbc();
 
     private final JdbcTransactionTemplate jdbcTxTemplate = new JdbcTransactionTemplate(
             CFG.spendJdbcUrl()
+    );
+
+    private final TransactionTemplate txTemplate = new TransactionTemplate(
+            new JdbcTransactionManager(
+                    DataSources.dataSource(CFG.spendJdbcUrl())
+            )
     );
 
     public SpendJson createSpend(SpendJson spend) {
@@ -39,12 +48,18 @@ public class SpendDbClient {
         );
     }
 
-    public SpendJson createSpringSpend(SpendJson spend) {
-        CategoryEntity categoryEntity = new CategoryDaoSpringJdbc(dataSource(CFG.spendJdbcUrl())).create(CategoryEntity.fromJson(spend.category()));
+    public SpendJson createSpendSpringJdbc(SpendJson spend) {
+        return txTemplate.execute(status -> {
+                    CategoryEntity category = categorySpringDao
+                            .create(CategoryEntity.fromJson(spend.category()));
 
-        SpendEntity spendEntity = SpendEntity.fromJson(spend);
-        spendEntity.setCategory(categoryEntity);
+                    SpendEntity spendEntity = SpendEntity.fromJson(spend);
+                    spendEntity.setCategory(category);
 
-        return SpendJson.fromEntity(new SpendDaoSpringJdbc(dataSource(CFG.spendJdbcUrl())).create(spendEntity));
+                    return SpendJson.fromEntity(spendSpringDao
+                            .create(spendEntity));
+                }
+
+        );
     }
 }
