@@ -6,24 +6,25 @@ import guru.qa.niffler.data.entity.spend.CategoryEntity;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.model.CurrencyValues;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static guru.qa.niffler.data.templates.Connections.holder;
+
 
 public class SpendDaoJdbc implements SpendDao {
 
     private static final Config CFG = Config.getInstance();
 
-    private final Connection connection;
-
-    public SpendDaoJdbc(Connection connection) {
-        this.connection = connection;
-    }
 
     @Override
     public SpendEntity create(SpendEntity spend) {
-        try (PreparedStatement ps = connection.prepareStatement(
+        try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO spend (username, spend_date, currency, amount, description, category_id) " +
                         "VALUES ( ?, ?, ?, ?, ?, ?)",
                 Statement.RETURN_GENERATED_KEYS
@@ -54,7 +55,7 @@ public class SpendDaoJdbc implements SpendDao {
 
     @Override
     public List<SpendEntity> findAll() {
-        try (PreparedStatement preparedStatement = connection.prepareStatement(
+        try (PreparedStatement preparedStatement = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "SELECT * FROM spend"
         )) {
             List<SpendEntity> spendEntities = new ArrayList<>();
