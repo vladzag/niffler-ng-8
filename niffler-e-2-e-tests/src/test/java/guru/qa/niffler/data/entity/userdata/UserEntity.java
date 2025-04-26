@@ -127,5 +127,16 @@ public class UserEntity implements Serializable {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
 
+    @Override
+    public String toString() {
+        return "UserEntity{" + "\n" +
+                "id: " + id.toString() + "\n" +
+                "username: " + username + "\n" +
+                "currency: " + currency + "\n" +
+                "firstname: " + firstname + "\n" +
+                "surname: " + surname + "\n" +
+                "fullname: " + fullname + "\n" +
+                '}';
+    }
 
 }

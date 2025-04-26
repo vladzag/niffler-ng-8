@@ -48,4 +48,14 @@ public class FriendshipEntity implements Serializable {
   public final int hashCode() {
     return Objects.hash(requester, addressee);
   }
+
+  @Override
+  public String toString() {
+    return "FriendshipEntity{\n" +
+            "requester: " + requester.getId().toString() + "\n" +
+            "addressee: " + addressee.getId().toString() + "\n" +
+            "createdDate: " + createdDate + "\n" +
+            "status=" + status + "\n" +
+            '}';
+  }
 }

@@ -11,9 +11,12 @@ import guru.qa.niffler.data.dao.impl.UdUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
+import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.repository.AuthUserRepository;
+import guru.qa.niffler.data.repository.UDUserRepository;
 import guru.qa.niffler.data.repository.impl.AuthUserRepositoryJdbc;
+import guru.qa.niffler.data.repository.impl.UDUserRepositoryJdbc;
 import guru.qa.niffler.data.templates.DataSources;
 import guru.qa.niffler.data.templates.XaTransactionTemplate;
 import guru.qa.niffler.model.UserJson;
@@ -23,8 +26,10 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.List;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.UUID;
 
 import static guru.qa.niffler.data.templates.DataSources.testDataSource;
 
@@ -39,6 +44,7 @@ public class UsersDbClient {
     private final AuthUserDao authUserSpringDao = new AuthUserDaoSpringJdbc();
     private final AuthAuthorityDao authAuthoritySpringDao = new AuthAuthorityDaoSpringJdbc();
     private final UdUserDao userSpringDao = new UdUserDaoSpringJdbc();
+    private final UDUserRepository udUserRepository = new UDUserRepositoryJdbc();
 
     private final TransactionTemplate txTemplate = new TransactionTemplate(
             new JdbcTransactionManager(
@@ -187,5 +193,37 @@ public class UsersDbClient {
     public Optional<UserEntity> findUserByUsername(String username) {
         return userSpringDao.findByUsername(username);
 
+    }
+
+    public Optional<UserEntity> findUserByID(UUID id) {
+        return udUserRepository.findById(id);
+    }
+
+    public void addIncomeInvitation(UUID requesterUUID, UUID addresseeUUID) {
+        UserEntity requester = new UserEntity();
+        requester.setId(requesterUUID);
+        UserEntity addressee = new UserEntity();
+        addressee.setId(addresseeUUID);
+
+        udUserRepository.addIncomeInvitation(requester, addressee);
+    }
+
+    public void addFriend(UUID requesterUUID, UUID addresseeUUID) {
+        UserEntity requester = new UserEntity();
+        requester.setId(requesterUUID);
+        UserEntity addressee = new UserEntity();
+        addressee.setId(addresseeUUID);
+
+        udUserRepository.addFriend(requester, addressee);
+    }
+
+    //метод для проверки запросов на дружбу
+    public List<FriendshipEntity> getFriendshipRequestsByUserID(UUID requesterUUID, UUID addresseeUUID) {
+        UserEntity requester = new UserEntity();
+        requester.setId(requesterUUID);
+        UserEntity addressee = new UserEntity();
+        addressee.setId(addresseeUUID);
+
+        return udUserRepository.getFriendshipRequestsByUsersID(requester, addressee);
     }
 }
