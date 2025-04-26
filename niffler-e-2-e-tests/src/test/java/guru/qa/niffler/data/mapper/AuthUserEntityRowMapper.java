@@ -17,7 +17,7 @@ public class AuthUserEntityRowMapper implements RowMapper<AuthUserEntity> {
   @Override
   public AuthUserEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
     AuthUserEntity result = new AuthUserEntity();
-    result.setId(rs.getObject("id", UUID.class));
+//    result.setId(rs.getObject("id", UUID.class));
     result.setUsername(rs.getString("username"));
     result.setPassword(rs.getString("password"));
     result.setEnabled(rs.getBoolean("enabled"));

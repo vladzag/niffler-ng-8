@@ -32,7 +32,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
                     Statement.RETURN_GENERATED_KEYS
             );
             preparedStatement.setString(1, spend.getUsername());
-            preparedStatement.setDate(2, spend.getSpendDate());
+            preparedStatement.setDate(2, new java.sql.Date(spend.getSpendDate().getTime()));
             preparedStatement.setString(3, spend.getCurrency().name());
             preparedStatement.setDouble(4, spend.getAmount());
             preparedStatement.setString(5, spend.getDescription());
