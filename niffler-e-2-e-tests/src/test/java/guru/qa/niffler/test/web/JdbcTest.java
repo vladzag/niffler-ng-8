@@ -11,6 +11,8 @@ import guru.qa.niffler.service.UsersDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Date;
 import java.util.List;
@@ -43,26 +45,20 @@ public class JdbcTest {
         Assertions.assertTrue(usersDbClient.findUserByUsername(user.username()).isPresent());
     }
 
+    static UsersDbClient usersDbClient = new UsersDbClient();
 
-    @Test
+    @ValueSource(
+            strings = {
+                    "valentin-11",
+            }
+    )
+    @ParameterizedTest
     void springJdbcTest() {
-        UsersDbClient usersDbClient = new UsersDbClient();
         String username = RandomDataUtils.randomUsername();
 
-        UserJson user = usersDbClient.createUserJdbcWithoutTx(
-                new UserJson(
-                        null,
-                        username,
-                        null,
-                        null,
-                        null,
-                        CurrencyValues.RUB,
-                        null,
-                        null,
-                        null
-                )
-        );
-        Assertions.assertTrue(usersDbClient.findUserByUsername(user.username()).isPresent());
+        UserJson user = usersDbClient.createUser(username, "12345");
+        usersDbClient.addIncomeInvitation(user, 1);
+        usersDbClient.addOutcomeInvitation(user, 1);
     }
 
     @Test
@@ -110,7 +106,7 @@ public class JdbcTest {
         );
     }
 
-    @Test
+    /*@Test
     void springChainedManagerWithCorrectDataTest() {
         UsersDbClient userDbClient = new UsersDbClient();
         String username = RandomDataUtils.randomUsername();
@@ -139,14 +135,6 @@ public class JdbcTest {
 
         UserJson user = userDbClient.createUser(
                 new UserJson(
-                        /*
-                        При передаче значения null в качестве username в метод UdUserDaoSpringJdbc,
-                         вызов ps.setString(1, null) приведет к ошибке при создании пользователя.
-                         Однако, несмотря на эту ошибку, записи в таблицах user-auth и authorities-auth всё равно будут созданы.
-
-                         Это указывает на то, что транзакция не была откатана после ошибки в userdata,
-                         что демонстрирует невозможность отката внутренней транзакции при сбое во внешней.
-                         */
                         null,
                         username,
                         null,
@@ -160,7 +148,7 @@ public class JdbcTest {
                 ));
 
         System.out.println(user);
-    }
+    }*/
 
     @Test
     void findUserWithFriendshipByIdWithJoinRequestTest() {

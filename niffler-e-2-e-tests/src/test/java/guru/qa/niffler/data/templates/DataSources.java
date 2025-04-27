@@ -3,6 +3,8 @@ package guru.qa.niffler.data.templates;
 import com.atomikos.jdbc.AtomikosDataSourceBean;
 import org.apache.commons.lang3.StringUtils;
 import org.postgresql.ds.PGSimpleDataSource;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 
 import java.util.Map;
 import java.util.Properties;
@@ -31,8 +33,13 @@ public class DataSources {
                     dsBean.setXaProperties(props);
                     dsBean.setPoolSize(3);
                     dsBean.setMaxPoolSize(10);
-                    return dsBean;
-                }
+                    try {
+                        InitialContext context = new InitialContext();
+                        context.bind("java:comp/env/jdbc/" + uniqID, dsBean);
+                    } catch (NamingException e) {
+                        throw new RuntimeException(e);
+                    }
+                    return dsBean;                }
         );
     }
 
