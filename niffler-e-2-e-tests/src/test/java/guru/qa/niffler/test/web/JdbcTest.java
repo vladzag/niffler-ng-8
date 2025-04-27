@@ -1,5 +1,7 @@
 package guru.qa.niffler.test.web;
 
+import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
+import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
@@ -9,7 +11,14 @@ import guru.qa.niffler.service.UsersDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JdbcTest {
 
@@ -151,5 +160,52 @@ public class JdbcTest {
                 ));
 
         System.out.println(user);
+    }
+
+    @Test
+    void findUserWithFriendshipByIdWithJoinRequestTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+
+        Optional<UserEntity> userByID =
+                usersDbClient.findUserByID(UUID.fromString("c7f0e3b7-a0f7-4d6e-a819-57289217cd0b"));
+
+        if (userByID.isPresent()) {
+            UserEntity user = userByID.get();
+            System.out.println(user);
+            System.out.println("Friendship requests: ");
+            user.getFriendshipRequests().forEach(System.out::println);
+            System.out.println("Friendship addressees: ");
+            user.getFriendshipAddressees().forEach(System.out::println);
+        }
+    }
+
+    @Test
+    void addFriendInvitationTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+
+        UUID requesterUUID = UUID.fromString("598c9c39-e3d5-4f4a-b803-6044da6f5c1e");
+        UUID addresseeUUID = UUID.fromString("68adfcea-54c1-4991-84f8-e68156de5d3b");
+
+        usersDbClient.addIncomeInvitation(requesterUUID, addresseeUUID);
+
+        List<FriendshipEntity> requests = usersDbClient.getFriendshipRequestsByUserID(requesterUUID, addresseeUUID);
+
+        assertEquals("PENDING", requests.getFirst().getStatus().name());
+    }
+
+
+    @Test
+    void addFriendTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+
+        UUID requesterUUID = UUID.fromString("36b16a70-62e6-4727-912a-f6dfe66cdbe5");
+        UUID addresseeUUID = UUID.fromString("1f50791c-69a0-49e4-a81a-502a153174ca");
+
+        usersDbClient.addFriend(requesterUUID, addresseeUUID);
+
+        List<FriendshipEntity> requests = usersDbClient.getFriendshipRequestsByUserID(requesterUUID, addresseeUUID);
+
+        assertEquals(2, requests.size());
+        assertTrue(requests.stream().allMatch(f -> f.getStatus().name().equals("ACCEPTED")));
     }
 }

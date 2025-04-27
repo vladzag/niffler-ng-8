@@ -11,7 +11,12 @@ import guru.qa.niffler.data.dao.impl.UdUserDaoSpringJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
+import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
+import guru.qa.niffler.data.repository.AuthUserRepository;
+import guru.qa.niffler.data.repository.UDUserRepository;
+import guru.qa.niffler.data.repository.impl.AuthUserRepositoryJdbc;
+import guru.qa.niffler.data.repository.impl.UDUserRepositoryJdbc;
 import guru.qa.niffler.data.templates.DataSources;
 import guru.qa.niffler.data.templates.XaTransactionTemplate;
 import guru.qa.niffler.model.UserJson;
@@ -21,24 +26,25 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import java.util.List;
 import java.util.Arrays;
 import java.util.Optional;
+import java.util.UUID;
 
 import static guru.qa.niffler.data.templates.DataSources.testDataSource;
-import static java.sql.Connection.TRANSACTION_READ_UNCOMMITTED;
 
 public class UsersDbClient {
 
     private static final Config CFG = Config.getInstance();
     private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
 
-    private final AuthUserDao authUserDao = new AuthUserDaoSpringJdbc();
-    private final AuthAuthorityDao authAuthorityDao = new AuthAuthorityDaoSpringJdbc();
+    private final AuthUserRepository authUserRepository = new AuthUserRepositoryJdbc();
     private final UdUserDao userDao = new UdUserDaoJdbc();
 
     private final AuthUserDao authUserSpringDao = new AuthUserDaoSpringJdbc();
     private final AuthAuthorityDao authAuthoritySpringDao = new AuthAuthorityDaoSpringJdbc();
     private final UdUserDao userSpringDao = new UdUserDaoSpringJdbc();
+    private final UDUserRepository udUserRepository = new UDUserRepositoryJdbc();
 
     private final TransactionTemplate txTemplate = new TransactionTemplate(
             new JdbcTransactionManager(
@@ -73,11 +79,11 @@ public class UsersDbClient {
             aue.setAccountNonExpired(true);
             aue.setCredentialsNonExpired(true);
 
-            AuthUserEntity createdAuthUser = authUserDao.create(aue);
+            AuthUserEntity createdAuthUser = authUserRepository.create(aue);
 
             AuthorityEntity[] authorityEntities = getAuthorityEntities(createdAuthUser);
 
-            authAuthorityDao.create(authorityEntities);
+            authUserRepository.create(createdAuthUser);
             return UserJson.fromEntity(userDao.create(UserEntity.fromJson(user)), null);
         });
     }
@@ -93,19 +99,17 @@ public class UsersDbClient {
                     authUser.setCredentialsNonExpired(true);
 
 
-                    AuthUserEntity createdAuthUser = authUserDao.create(authUser);
-
-
-                    AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
-                            e -> {
-                                AuthorityEntity ae = new AuthorityEntity();
-                                ae.setUserId(createdAuthUser.getId());
-                                ae.setAuthority(e);
-                                return ae;
-                            }
-                    ).toArray(AuthorityEntity[]::new);
-
-                    authAuthorityDao.create(authorityEntities);
+                    authUser.setAuthorities(
+                            Arrays.stream(Authority.values()).map(
+                                    e -> {
+                                        AuthorityEntity ae = new AuthorityEntity();
+                                        ae.setUser(authUser);
+                                        ae.setAuthority(e);
+                                        return ae;
+                                    }
+                            ).toList()
+                    );
+                    authUserRepository.create(authUser);
                     return UserJson.fromEntity(
                             userDao.create(UserEntity.fromJson(user)),
                             null
@@ -125,11 +129,11 @@ public class UsersDbClient {
         aue.setAccountNonExpired(true);
         aue.setCredentialsNonExpired(true);
 
-        AuthUserEntity createdAuthUser = authUserDao.create(aue);
+        AuthUserEntity createdAuthUser = authUserRepository.create(aue);
 
         AuthorityEntity[] authorityEntities = getAuthorityEntities(createdAuthUser);
 
-        authAuthorityDao.create(authorityEntities);
+        authUserRepository.create(createdAuthUser);
         return UserJson.fromEntity(userDao.create(UserEntity.fromJson(user)), null);
     }
 
@@ -189,5 +193,37 @@ public class UsersDbClient {
     public Optional<UserEntity> findUserByUsername(String username) {
         return userSpringDao.findByUsername(username);
 
+    }
+
+    public Optional<UserEntity> findUserByID(UUID id) {
+        return udUserRepository.findById(id);
+    }
+
+    public void addIncomeInvitation(UUID requesterUUID, UUID addresseeUUID) {
+        UserEntity requester = new UserEntity();
+        requester.setId(requesterUUID);
+        UserEntity addressee = new UserEntity();
+        addressee.setId(addresseeUUID);
+
+        udUserRepository.addIncomeInvitation(requester, addressee);
+    }
+
+    public void addFriend(UUID requesterUUID, UUID addresseeUUID) {
+        UserEntity requester = new UserEntity();
+        requester.setId(requesterUUID);
+        UserEntity addressee = new UserEntity();
+        addressee.setId(addresseeUUID);
+
+        udUserRepository.addFriend(requester, addressee);
+    }
+
+    //метод для проверки запросов на дружбу
+    public List<FriendshipEntity> getFriendshipRequestsByUserID(UUID requesterUUID, UUID addresseeUUID) {
+        UserEntity requester = new UserEntity();
+        requester.setId(requesterUUID);
+        UserEntity addressee = new UserEntity();
+        addressee.setId(addresseeUUID);
+
+        return udUserRepository.getFriendshipRequestsByUsersID(requester, addressee);
     }
 }
