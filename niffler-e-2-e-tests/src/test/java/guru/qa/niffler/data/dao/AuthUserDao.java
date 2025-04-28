@@ -4,6 +4,7 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 
 import java.util.Optional;
 import java.util.UUID;
+import java.util.List;
 
 public interface AuthUserDao {
 
@@ -11,4 +12,11 @@ public interface AuthUserDao {
 
   Optional<AuthUserEntity> findById(UUID id);
 
+  AuthUserEntity update(AuthUserEntity user);
+
+  Optional<AuthUserEntity> findByUsername(String username);
+
+  List<AuthUserEntity> findAll();
+
+  void remove(AuthUserEntity user);
 }

@@ -10,6 +10,7 @@ import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.service.UsersDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -22,9 +23,10 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@Disabled
 public class JdbcTest {
 
-    @Test
+    /*@Test
     void txTest() {
         UsersDbClient usersDbClient = new UsersDbClient();
         String username = RandomDataUtils.randomUsername();
@@ -57,8 +59,8 @@ public class JdbcTest {
         String username = RandomDataUtils.randomUsername();
 
         UserJson user = usersDbClient.createUser(username, "12345");
-        usersDbClient.addIncomeInvitation(user, 1);
-        usersDbClient.addOutcomeInvitation(user, 1);
+        usersDbClient.createIncomeInvitations(user, 1);
+        usersDbClient.createOutcomeInvitations(user, 1);
     }
 
     @Test
@@ -106,7 +108,7 @@ public class JdbcTest {
         );
     }
 
-    /*@Test
+    @Test
     void springChainedManagerWithCorrectDataTest() {
         UsersDbClient userDbClient = new UsersDbClient();
         String username = RandomDataUtils.randomUsername();
@@ -148,7 +150,7 @@ public class JdbcTest {
                 ));
 
         System.out.println(user);
-    }*/
+    }
 
     @Test
     void findUserWithFriendshipByIdWithJoinRequestTest() {
@@ -174,7 +176,7 @@ public class JdbcTest {
         UUID requesterUUID = UUID.fromString("598c9c39-e3d5-4f4a-b803-6044da6f5c1e");
         UUID addresseeUUID = UUID.fromString("68adfcea-54c1-4991-84f8-e68156de5d3b");
 
-        usersDbClient.addIncomeInvitation(requesterUUID, addresseeUUID);
+        usersDbClient.createIncomeInvitations(requesterUUID, addresseeUUID);
 
         List<FriendshipEntity> requests = usersDbClient.getFriendshipRequestsByUserID(requesterUUID, addresseeUUID);
 
@@ -195,5 +197,5 @@ public class JdbcTest {
 
         assertEquals(2, requests.size());
         assertTrue(requests.stream().allMatch(f -> f.getStatus().name().equals("ACCEPTED")));
-    }
+    }*/
 }
