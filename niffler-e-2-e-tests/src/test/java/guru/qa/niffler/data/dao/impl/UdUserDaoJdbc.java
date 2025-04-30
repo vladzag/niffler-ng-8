@@ -158,7 +158,7 @@ public class UdUserDaoJdbc implements UdUserDao {
     @Override
     public List<UserEntity> findAll() {
         try (PreparedStatement ps = holder(url).connection().prepareStatement(
-                "SELECT * FROM spend")) {
+                "SELECT * FROM \"user\"")) {
             ps.execute();
             List<UserEntity> result = new ArrayList<>();
             try (ResultSet rs = ps.getResultSet()) {

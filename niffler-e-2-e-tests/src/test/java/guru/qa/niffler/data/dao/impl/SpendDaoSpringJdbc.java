@@ -52,7 +52,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
         jdbcTemplate.update(con -> {
             PreparedStatement ps = con.prepareStatement(
-                    "UPDATE spend SET username = ?, spend_date = ?, currency = ?, amount = ?, description = ?, category_id = ?"
+                    "UPDATE spend SET username = ?, spend_date = ?, currency = ?, amount = ?, description = ?, category_id = ? WHERE id = ?;"
             );
             ps.setString(1, spend.getUsername());
             ps.setDate(2, new java.sql.Date(spend.getSpendDate().getTime()));
