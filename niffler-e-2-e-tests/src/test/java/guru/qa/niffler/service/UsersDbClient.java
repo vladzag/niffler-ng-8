@@ -18,7 +18,7 @@ import guru.qa.niffler.data.repository.AuthUserRepository;
 import guru.qa.niffler.data.repository.UserDataUserRepository;
 import guru.qa.niffler.data.repository.impl.AuthUserRepositoryHibernate;
 import guru.qa.niffler.data.repository.impl.UserDataUserRepositoryHibernate;
-import guru.qa.niffler.data.templates.DataSources;
+import guru.qa.niffler.data.jdbc.DataSources;
 import guru.qa.niffler.data.templates.XaTransactionTemplate;
 import guru.qa.niffler.grpc.CurrencyValues;
 import guru.qa.niffler.model.UserJson;
@@ -33,10 +33,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.templates.DataSources.testDataSource;
+import static guru.qa.niffler.data.jdbc.DataSources.testDataSource;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
-public class UsersDbClient {
+public class UsersDbClient implements UsersClient {
 
 
     private static final Config CFG = Config.getInstance();

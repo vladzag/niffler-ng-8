@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.List;
 
-import static guru.qa.niffler.data.templates.Connections.holder;
+import static guru.qa.niffler.data.jdbc.Connections.holder;
 
 
 public class UdUserDaoJdbc implements UdUserDao {

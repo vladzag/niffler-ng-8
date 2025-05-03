@@ -12,7 +12,7 @@ import guru.qa.niffler.model.SpendJson;
 import java.util.Optional;
 import java.util.UUID;
 
-public class SpendDbClient {
+public class SpendDbClient implements SpendClient{
 
     //  private final SpendRepository spendRepository = new SpendRepositoryJdbc(); //TODO: JDBC
     //  private final SpendRepository spendRepository = new SpendRepositorySpringJdbc(); //TODO: Spring
