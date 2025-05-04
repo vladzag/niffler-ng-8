@@ -85,6 +85,7 @@ public class SpendDbClient implements SpendClient{
         return Optional.empty();
     }
 
+
     public void removeSpend(SpendJson spend) {
         xaTransactionTemplate.execute(() -> {
             spendRepository.findById(spend.id()).orElseThrow();

@@ -27,4 +27,14 @@ public class FriendsPage {
     requestsTable.$$("tr").shouldHave(textsInAnyOrder(expectedUsernames));
     return this;
   }
+
+  public FriendsPage checkUserHasExpectedAmountOfIncomeInvitation(int amount) {
+    requestsTable.$$("tr").shouldHave(size(amount));
+    return this;
+  }
+
+  public FriendsPage checkUserHasExptectedAmountOfFriendsFriend(int amount) {
+    friendsTable.$$("tr").shouldHave(size(amount));
+    return this;
+  }
 }

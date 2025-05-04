@@ -26,11 +26,12 @@ public class UserExtension implements
                     if ("" .equals((userAnno.username()))) {
                         final String username = RandomDataUtils.randomUsername();
                         UserJson user = usersClient.createUser(username, defaultPassword);
+                        usersClient.createIncomeInvitations(user, userAnno.incomeInvitations());
+                        usersClient.createOutcomeInvitations(user, userAnno.outcomeInvitations());
+                        usersClient.createFriends(user, userAnno.friends());
                         context.getStore(NAMESPACE).put(
                                 context.getUniqueId(),
-                                user.withPassword(
-                                        defaultPassword
-                                )
+                                user
                         );
                     }
                 });

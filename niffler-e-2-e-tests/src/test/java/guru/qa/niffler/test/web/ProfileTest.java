@@ -34,18 +34,17 @@ public class ProfileTest {
     }
 
     @User(
-            username = "duck",
             categories = @Category(
                     archived = false
             )
     )
     @Test
-    void activeCategoryShouldPresentInCategoriesList(CategoryJson[] category) {
+    void activeCategoryShouldPresentInCategoriesList(UserJson userJson) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .successLogin("duck", "12345")
+                .successLogin(userJson.username(), userJson.testData().password())
                 .checkThatPageLoaded();
 
         Selenide.open(CFG.frontUrl() + "profile", ProfilePage.class)
-                .checkCategoryExists(category[0].name());
+                .checkCategoryExists(String.valueOf(userJson.testData().categories().getFirst()));
     }
 }

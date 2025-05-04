@@ -7,6 +7,7 @@ import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
 import org.junit.jupiter.api.Test;
@@ -17,7 +18,6 @@ public class SpendingTest {
   private static final Config CFG = Config.getInstance();
 
   @User(
-      username = "duck",
       spendings = @Spend(
           category = "Обучение",
           description = "Обучение Advanced 2.0",
@@ -26,12 +26,12 @@ public class SpendingTest {
       )
   )
   @Test
-  void categoryDescriptionShouldBeChangedFromTable(SpendJson spend) {
+  void categoryDescriptionShouldBeChangedFromTable(UserJson userJson) {
     final String newDescription = "Обучение Niffler Next Generation";
 
     Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
-        .editSpending(spend.description())
+        .successLogin(userJson.username(), userJson.testData().password())
+        .editSpending(userJson.testData().spendings().getFirst().description())
         .editDescription(newDescription)
         .save();
 

@@ -80,7 +80,7 @@ public class SpendApiClient {
   }
 
   public void removeSpends(String username, String... ids) {
-    final Response<Void> response;
+    final Response<String> response;
     try {
       response = spendApi.removeSpends(username, Arrays.stream(ids).toList())
           .execute();

@@ -14,13 +14,14 @@ import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.FriendshipStatus;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
+import guru.qa.niffler.data.jdbc.DataSources;
 import guru.qa.niffler.data.repository.AuthUserRepository;
 import guru.qa.niffler.data.repository.UserDataUserRepository;
 import guru.qa.niffler.data.repository.impl.AuthUserRepositoryHibernate;
 import guru.qa.niffler.data.repository.impl.UserDataUserRepositoryHibernate;
-import guru.qa.niffler.data.jdbc.DataSources;
 import guru.qa.niffler.data.templates.XaTransactionTemplate;
 import guru.qa.niffler.grpc.CurrencyValues;
+import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserJson;
 import org.springframework.data.transaction.ChainedTransactionManager;
 import org.springframework.jdbc.support.JdbcTransactionManager;
@@ -106,7 +107,7 @@ public class UsersDbClient implements UsersClient {
                     authUserRepository.create(authUser);
                     return UserJson.fromEntity(
                             udUserRepository.create(userEntity(username)), null
-                    );
+                    ).withTestData(new TestData(password));
                 }
         );
     }
@@ -206,12 +207,22 @@ public class UsersDbClient implements UsersClient {
             ).orElseThrow();
 
             for (int i = 0; i < count; i++) {
-                xaTransactionTemplate.execute(() -> {
-                    UserEntity addressee = createRandomUser();
-
-                    udUserRepository.sendInvitation(targetEntity, addressee);
-                    return null;
-                });
+                targetUser.testData()
+                        .incomeInvitations()
+                        .add(UserJson.fromEntity(
+                                        xaTransactionTemplate.execute(() -> {
+                                                    final String username = randomUsername();
+                                                    final UserEntity newUser = createRandomUser();
+                                                    udUserRepository.sendInvitation(
+                                                            newUser,
+                                                            targetEntity
+                                                    );
+                                                    return newUser;
+                                                }
+                                        ),
+                                        guru.qa.niffler.model.FriendshipStatus.INVITE_RECEIVED
+                                )
+                        );
             }
         }
     }
@@ -231,12 +242,22 @@ public class UsersDbClient implements UsersClient {
             ).orElseThrow();
 
             for (int i = 0; i < count; i++) {
-                xaTransactionTemplate.execute(() -> {
-                    UserEntity addressee = createRandomUser();
-
-                    udUserRepository.sendInvitation(targetEntity, addressee);
-                    return null;
-                });
+                targetUser.testData()
+                        .outcomeInvitations()
+                        .add(UserJson.fromEntity(
+                                        xaTransactionTemplate.execute(() -> {
+                                                    final String username = randomUsername();
+                                                    final UserEntity newUser = createRandomUser();
+                                                    udUserRepository.sendInvitation(
+                                                            targetEntity,
+                                                            newUser
+                                                    );
+                                                    return newUser;
+                                                }
+                                        ),
+                                        guru.qa.niffler.model.FriendshipStatus.INVITE_SENT
+                                )
+                        );
             }
         }
     }
@@ -248,15 +269,22 @@ public class UsersDbClient implements UsersClient {
             ).orElseThrow();
 
             for (int i = 0; i < count; i++) {
-                xaTransactionTemplate.execute(() -> {
-                            UserEntity addressee = createRandomUser();
-                            udUserRepository.addFriend(
-                                    targetEntity,
-                                    addressee
-                            );
-                            return null;
-                        }
-                );
+                targetUser.testData()
+                        .friends()
+                        .add(UserJson.fromEntity(
+                                        xaTransactionTemplate.execute(() -> {
+                                                    final String username = randomUsername();
+                                                    final UserEntity newUser = createRandomUser();
+                                                    udUserRepository.addFriend(
+                                                            targetEntity,
+                                                            newUser
+                                                    );
+                                                    return newUser;
+                                                }
+                                        ),
+                                        guru.qa.niffler.model.FriendshipStatus.FRIEND
+                                )
+                        );
             }
         }
     }
@@ -281,7 +309,6 @@ public class UsersDbClient implements UsersClient {
         );
         return authUser;
     }
-
 
 
     public UserJson create(UserJson userJson) {
