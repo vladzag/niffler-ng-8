@@ -1,4 +1,4 @@
-package guru.qa.niffler.data.templates;
+package guru.qa.niffler.data.jdbc;
 
 import java.util.List;
 

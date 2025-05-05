@@ -6,7 +6,7 @@ import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.FriendshipStatus;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.mapper.UdUserEntityRowMapper;
-import guru.qa.niffler.data.templates.DataSources;
+import guru.qa.niffler.data.jdbc.DataSources;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;

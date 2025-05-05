@@ -4,7 +4,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.SpendDao;
 import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.mapper.SpendEntityRowMapper;
-import guru.qa.niffler.data.templates.DataSources;
+import guru.qa.niffler.data.jdbc.DataSources;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;

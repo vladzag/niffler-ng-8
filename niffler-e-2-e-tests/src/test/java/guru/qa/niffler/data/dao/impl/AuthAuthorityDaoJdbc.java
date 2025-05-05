@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-import static guru.qa.niffler.data.templates.Connections.holder;
+import static guru.qa.niffler.data.jdbc.Connections.holder;
 
 
 public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
