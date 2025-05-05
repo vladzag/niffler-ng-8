@@ -105,7 +105,7 @@ public class SpendApiClient implements SpendClient {
 
     @Override
     public void removeCategory(CategoryJson category) {
-        throw new UnsupportedOperationException("Can`t remove category");
+        throw new UnsupportedOperationException("NYI method for category removal");
     }
 
 }

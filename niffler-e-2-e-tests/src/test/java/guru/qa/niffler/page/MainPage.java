@@ -51,7 +51,7 @@ public class MainPage {
                     description
             )));
 
-    if (spendRow.isDisplayed()) {
+    if (spendRow.exists() && spendRow.isDisplayed()) {
       return this;
     } else {
       searchInput.click();
