@@ -4,6 +4,7 @@ import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.UserdataApi;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.UserJson;
+import io.qameta.allure.Step;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -31,6 +32,7 @@ public class UsersApiClient implements UsersClient {
     private final UserdataApi userdataApi = retrofit.create(UserdataApi.class);
 
     @Override
+    @Step("Create user using API")
     public UserJson createUser(String username, String password) {
         try {
             authApi.requestRegisterForm().execute();

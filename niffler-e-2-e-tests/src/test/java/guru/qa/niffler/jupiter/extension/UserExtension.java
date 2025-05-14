@@ -20,7 +20,7 @@ public class UserExtension implements
     private final UsersClient usersClient = new UsersDbClient();
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(ExtensionContext context) {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
                 .ifPresent(userAnno -> {
                     if ("" .equals((userAnno.username()))) {
