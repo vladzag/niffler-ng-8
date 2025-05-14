@@ -80,5 +80,6 @@ public class MainPage {
     public SpendingTable getSpendingTable() {
         spendingTable.scrollIntoView(true);
         return (SpendingTable) spendingTable;
+
     }
 }
