@@ -1,6 +1,7 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.condition.Colour;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spend;
@@ -73,9 +74,12 @@ public class SpendingTest {
         BufferedImage actual = ImageIO.read(mainPage.statComponent().pieChartImage().screenshot());
 
         assertFalse(new ScreenDiffResult(
-                expected,
-                actual
-        ));
+                        expected,
+                        actual),
+                "Screen comparison failure"
+        );
+
+        mainPage.getStatComponent().checkBubbles(Colour.yellow);
     }
 
     @User(
