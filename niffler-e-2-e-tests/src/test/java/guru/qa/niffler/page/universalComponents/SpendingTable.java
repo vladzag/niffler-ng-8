@@ -2,6 +2,8 @@ package guru.qa.niffler.page.universalComponents;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.condition.SpendConditions;
+import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.EditSpendingPage;
 
 import static com.codeborne.selenide.ClickOptions.usingJavaScript;
@@ -50,6 +52,11 @@ public class SpendingTable {
 
     public SpendingTable checkTableSize(int expectedSize) {
         tableRows.should(size(expectedSize));
+        return this;
+    }
+
+    public SpendingTable checkSpendingTable(SpendJson... expectedSpends) {
+        tableRows.should(SpendConditions.spends(expectedSpends));
         return this;
     }
 }
