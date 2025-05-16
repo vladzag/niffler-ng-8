@@ -2,7 +2,7 @@ package guru.qa.niffler.page.universalComponents;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.condition.Colour;
+import guru.qa.niffler.condition.Bubble;
 import guru.qa.niffler.condition.StatConditions;
 import lombok.NonNull;
 
@@ -14,7 +14,6 @@ import java.util.Objects;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
-import static guru.qa.niffler.condition.StatConditions.colour;
 
 public class StatComponent {
 
@@ -44,8 +43,18 @@ public class StatComponent {
         return ImageIO.read(Objects.requireNonNull(chart).screenshot());
     }
 
-    public StatComponent checkBubbles(Colour... expectedColours){
-        bubbles.should(StatConditions.colour(expectedColours));
+    public StatComponent checkBubbles(Bubble... expectedBubbles) {
+        bubbles.should(StatConditions.statBubbles(expectedBubbles));
         return this;
-    };
+    }
+
+    public StatComponent checkBubblesInAnyOrder(Bubble... expectedBubbles) {
+        bubbles.should(StatConditions.statBubblesInAnyOrder(expectedBubbles));
+        return this;
+    }
+
+    public StatComponent checkBubblesContains(Bubble... expectedBubbles) {
+        bubbles.should(StatConditions.statBubblesContains(expectedBubbles));
+        return this;
+    }
 }
