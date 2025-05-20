@@ -4,6 +4,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.universalComponents.SpendingTable;
 import guru.qa.niffler.page.universalComponents.StatComponent;
+import org.apache.kafka.common.metrics.Stat;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Condition.text;
@@ -82,4 +83,11 @@ public class MainPage {
         return (SpendingTable) spendingTable;
 
     }
+
+    public StatComponent getStatComponent() {
+        spendingTable.scrollIntoView(true);
+        return (StatComponent) statComponent;
+    }
+
+
 }

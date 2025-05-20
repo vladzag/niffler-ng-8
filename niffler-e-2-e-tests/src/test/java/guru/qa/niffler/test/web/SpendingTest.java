@@ -1,19 +1,25 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.condition.Bubble;
+import guru.qa.niffler.condition.Colour;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spend;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
+import guru.qa.niffler.page.universalComponents.SpendingTable;
+import guru.qa.niffler.page.universalComponents.StatComponent;
 import guru.qa.niffler.utils.ScreenDiffResult;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -73,10 +79,125 @@ public class SpendingTest {
         BufferedImage actual = ImageIO.read(mainPage.statComponent().pieChartImage().screenshot());
 
         assertFalse(new ScreenDiffResult(
-                expected,
-                actual
-        ));
+                        expected,
+                        actual),
+                "Screen comparison failure"
+        );
+
+        mainPage.getStatComponent().checkBubbles(new Bubble(Colour.yellow, "Обучение"));
     }
+
+    @User(
+            spendings =
+                    {
+                            @Spend(
+                                    category = "Обучение", description = "Обучение Advanced 2.0", amount = 79990, currency = CurrencyValues.RUB),
+                            @Spend(
+                                    category = "Рыбалка",
+                                    description = "Рыбалка на Неве",
+                                    amount = 1000,
+                                    currency = CurrencyValues.RUB
+                            )
+                    }
+    )
+    @Test
+    void checkBubblesTest(UserJson user) throws InterruptedException {
+        StatComponent statComponent = Selenide.open(CFG.authUrl(), LoginPage.class)
+                .login(user.username(), user.testData().password())
+                .getStatComponent();
+
+        statComponent.checkBubbles(
+                new Bubble(Colour.yellow, "Обучение 79990 ₽"),
+                new Bubble(Colour.green, "Рыбалка 1000 ₽")
+        );
+    }
+
+    @User(
+            spendings =
+                    {
+                            @Spend(
+                                    category = "Обучение", description = "Обучение Advanced 2.0", amount = 79990, currency = CurrencyValues.RUB),
+                            @Spend(
+                                    category = "Рыбалка", description = "Рыбалка на Неве", amount = 1000, currency = CurrencyValues.RUB)
+                            ,
+                            @Spend(
+                                    category = "Активность", description = "Прыжок с парашютом", amount = 500, currency = CurrencyValues.RUB)
+                    }
+    )
+    @Test
+    void checkBubblesInAnyOderTest(UserJson user) {
+        StatComponent statComponent = Selenide.open(CFG.authUrl(), LoginPage.class)
+                .login(user.username(), user.testData().password())
+                .getStatComponent();
+
+
+        statComponent.checkBubblesInAnyOrder(
+                new Bubble(Colour.orange, "Рыбалка 1000 ₽"),
+                new Bubble(Colour.yellow, "Обучение 79990 ₽"),
+                new Bubble(Colour.green, "Активность 500 ₽")
+        );
+    }
+
+    @User(
+            spendings =
+                    {
+                            @Spend(
+                                    category = "Обучение", description = "Обучение Advanced 2.0", amount = 79990, currency = CurrencyValues.RUB),
+                            @Spend(
+                                    category = "Рыбалка",
+                                    description = "Рыбалка на Неве",
+                                    amount = 1000, currency = CurrencyValues.RUB),
+                            @Spend(
+                                    category = "Активность",
+                                    description = "Прыжок с парашютом",
+                                    amount = 500, currency = CurrencyValues.RUB),
+                            @Spend(
+                                    category = "Животные",
+                                    description = "Собачий корм",
+                                    amount = 3000, currency = CurrencyValues.RUB),
+                    }
+    )
+    @Test
+    void checkBubblesContainsTest(UserJson user) {
+        StatComponent statComponent = Selenide.open(CFG.authUrl(), LoginPage.class)
+                .login(user.username(), user.testData().password())
+                .getStatComponent();
+
+
+        statComponent.checkBubblesContains(
+                new Bubble(Colour.yellow, "Обучение 79990 ₽"),
+                new Bubble(Colour.blue, "Рыбалка 1000 ₽")
+        );
+    }
+
+    @User(
+            spendings =
+                    {
+                            @Spend(
+                                    category = "Обучение", description = "Обучение Advanced 2.0", amount = 79990, currency = CurrencyValues.RUB),
+                            @Spend(
+                                    category = "Рыбалка",
+                                    description = "Рыбалка на Неве",
+                                    amount = 1000, currency = CurrencyValues.RUB),
+                            @Spend(
+                                    category = "Активность",
+                                    description = "Прыжок с парашютом",
+                                    amount = 500, currency = CurrencyValues.RUB),
+                            @Spend(
+                                    category = "Животные",
+                                    description = "Собачий корм",
+                                    amount = 3000, currency = CurrencyValues.RUB),
+                    }
+    )
+    @Test
+    void spendingTableShouldContainInfo(UserJson user)  {
+        SpendingTable spendings = Selenide.open(CFG.authUrl(), LoginPage.class)
+                .login(user.username(), user.testData().password())
+                .getSpendingTable();
+
+        spendings.checkSpendingTable(
+                user.testData().spendings().toArray(SpendJson[]::new)
+        );    }
 
     @User(
             spendings = @Spend(
