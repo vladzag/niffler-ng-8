@@ -1,41 +1,45 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.converter.BrowserConverter;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.page.LoginPage;
-import guru.qa.niffler.utils.SelenideUtils;
-import org.junit.jupiter.api.Test;
+import guru.qa.niffler.utils.Browser;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.converter.ConvertWith;
+import org.junit.jupiter.params.provider.EnumSource;
 
+import static com.codeborne.selenide.Condition.text;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 public class LoginTest {
 
     private static final Config CFG = Config.getInstance();
-    private final SelenideDriver driverChrome = new SelenideDriver(SelenideUtils.chromeConfig);
 
     @RegisterExtension
-    private final BrowserExtension browserExtension = new BrowserExtension();
+    private static final BrowserExtension browserExtension = new BrowserExtension();
 
-    @Test
-    void mainPageShouldBeDisplayedAfterSuccessLogin() {
-        SelenideDriver firefox = new SelenideDriver(SelenideUtils.firefoxConfig);
-        browserExtension.drivers().add(driverChrome);
-        driverChrome.open(CFG.frontUrl());
-        firefox.open(CFG.frontUrl());
+    @ParameterizedTest
+    @EnumSource(Browser.class)
+    void mainPageShouldBeDisplayedAfterSuccessLogin(@ConvertWith(BrowserConverter.class) SelenideDriver driver) {
+        browserExtension.add(driver);
+        driver.open(CFG.frontUrl());
 
-        new LoginPage(driverChrome)
+        new LoginPage(driver)
                 .successLogin("duck", "12345")
                 .checkThatPageLoaded();
     }
 
-    @Test
-    void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
-        browserExtension.drivers().add(driverChrome);
-        LoginPage loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
-        loginPage.login(randomUsername(), "BAD");
-        loginPage.checkError("Bad credentials");
+    @ParameterizedTest
+    @EnumSource(Browser.class)
+    void userShouldStayOnLoginPageAfterLoginWithBadCredentials(@ConvertWith(BrowserConverter.class) SelenideDriver driver) {
+        browserExtension.add(driver);
+        driver.open(CFG.frontUrl());
+        new LoginPage(driver).login(randomUsername(), "BAD").checkError("Bad credentials");
+
+        driver.$(".logo-section__text").should(text("Niffler"));
+
     }
 }

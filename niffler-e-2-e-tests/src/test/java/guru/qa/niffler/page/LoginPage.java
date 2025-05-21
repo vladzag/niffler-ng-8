@@ -25,21 +25,20 @@ public class LoginPage {
     }
 
 
-    public RegisterPage doRegister() {
+    public void doRegister() {
         registerButton.click();
-        return new RegisterPage();
     }
 
-    public MainPage successLogin(String username, String password) {
+    public LoginPage successLogin(String username, String password) {
         login(username, password);
-        return new MainPage();
+        return this;
     }
 
-    public MainPage login(String username, String password) {
+    public LoginPage login(String username, String password) {
         usernameInput.setValue(username);
         passwordInput.setValue(password);
         submitButton.click();
-        return new MainPage();
+        return this;
     }
 
     public LoginPage checkError(String error) {
