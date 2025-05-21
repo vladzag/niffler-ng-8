@@ -1,6 +1,7 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.universalComponents.SpendingTable;
 import guru.qa.niffler.page.universalComponents.StatComponent;
@@ -14,24 +15,31 @@ import static com.codeborne.selenide.Selenide.$$;
 
 public class MainPage {
 
-    private final SelenideElement header = $("#root header");
-    private final SelenideElement headerMenu = $("ul[role='menu']");
-    private final ElementsCollection tableRows = $("#spendings tbody").$$("tr");
-    private final SelenideElement statComponent = $("#stat");
-    private final SelenideElement spendingTable = $("#spendings");
-    private final SelenideElement searchInput = $("input[placeholder='Search']");
+    private final SelenideElement header;
+    private final SelenideElement headerMenu;
+    private final ElementsCollection tableRows;
+    private final SelenideElement statComponent;
+    private final SelenideElement spendingTable;
+    private final SelenideElement searchInput;
 
-
-    public FriendsPage friendsPage() {
-        header.$("button").click();
-        headerMenu.$$("li").find(text("Friends")).click();
-        return new FriendsPage();
+    public MainPage(SelenideDriver driver) {
+        this.header = $("#root header");
+        this.headerMenu = $("ul[role='menu']");
+        this.tableRows = $("#spendings tbody").$$("tr");
+        this.statComponent = $("#stat");
+        this.spendingTable = $("#spendings");
+        this.searchInput = $("input[placeholder='Search']");
     }
 
-    public PeoplePage allPeoplesPage() {
+    public void friendsPage() {
+        header.$("button").click();
+        headerMenu.$$("li").find(text("Friends")).click();
+    }
+
+    public void allPeoplesPage() {
         header.$("button").click();
         headerMenu.$$("li").find(text("All People")).click();
-        return new PeoplePage();
+
     }
 
     public EditSpendingPage editSpending(String spendingDescription) {
@@ -71,11 +79,10 @@ public class MainPage {
         return (StatComponent) statComponent;
     }
 
-    public ProfilePage goToProfilePage() {
+    public void goToProfilePage() {
         $("#root header");
         $("button").click();
         $$("li").find(text("Profile")).click();
-        return new ProfilePage();
     }
 
     public SpendingTable getSpendingTable() {

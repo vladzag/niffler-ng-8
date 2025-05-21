@@ -1,29 +1,45 @@
 package guru.qa.niffler.test.web;
 
-import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.annotation.meta.WebTest;
+import guru.qa.niffler.jupiter.converter.BrowserConverter;
+import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.page.LoginPage;
-import org.junit.jupiter.api.Test;
+import guru.qa.niffler.utils.Browser;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.converter.ConvertWith;
+import org.junit.jupiter.params.provider.EnumSource;
 
+import static com.codeborne.selenide.Condition.text;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
-@WebTest
 public class LoginTest {
 
-  private static final Config CFG = Config.getInstance();
+    private static final Config CFG = Config.getInstance();
 
-  @Test
-  void mainPageShouldBeDisplayedAfterSuccessLogin() {
-    Selenide.open(CFG.frontUrl(), LoginPage.class)
-        .successLogin("duck", "12345")
-        .checkThatPageLoaded();
-  }
+    @RegisterExtension
+    private static final BrowserExtension browserExtension = new BrowserExtension();
 
-  @Test
-  void userShouldStayOnLoginPageAfterLoginWithBadCredentials() {
-    LoginPage loginPage = Selenide.open(CFG.frontUrl(), LoginPage.class);
-    loginPage.login(randomUsername(), "BAD");
-    loginPage.checkError("Bad credentials");
-  }
+    @ParameterizedTest
+    @EnumSource(Browser.class)
+    void mainPageShouldBeDisplayedAfterSuccessLogin(@ConvertWith(BrowserConverter.class) SelenideDriver driver) {
+        browserExtension.add(driver);
+        driver.open(CFG.frontUrl());
+
+        new LoginPage(driver)
+                .successLogin("duck", "12345")
+                .checkThatPageLoaded();
+    }
+
+    @ParameterizedTest
+    @EnumSource(Browser.class)
+    void userShouldStayOnLoginPageAfterLoginWithBadCredentials(@ConvertWith(BrowserConverter.class) SelenideDriver driver) {
+        browserExtension.add(driver);
+        driver.open(CFG.frontUrl());
+        new LoginPage(driver).login(randomUsername(), "BAD").checkError("Bad credentials");
+
+        driver.$(".logo-section__text").should(text("Niffler"));
+
+    }
 }

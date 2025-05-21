@@ -1,26 +1,47 @@
 package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
+import com.codeborne.selenide.Selenide;
+import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.utils.ScreenDiffResult;
 import org.openqa.selenium.By;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Objects;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ProfilePage {
 
-    private final SelenideElement avatar = $("#image__input").parent().$("img");
-    private final SelenideElement userName = $("#username");
-    private final SelenideElement nameInput = $("#name");
-    private final SelenideElement photoInput = $("input[type='file']");
-    private final SelenideElement submitButton = $("button[type='submit']");
-    private final SelenideElement categoryInput = $("input[name='category']");
-    private final SelenideElement archivedSwitcher = $(".MuiSwitch-input");
-    private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
-    private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
-    private final SelenideElement profilePic = $(By.xpath("//img[contains(@src, 'data:image/jpeg')]"));
+    private final SelenideElement avatar;
+    private final SelenideElement userName;
+    private final SelenideElement nameInput;
+    private final SelenideElement photoInput;
+    private final SelenideElement submitButton;
+    private final SelenideElement categoryInput;
+    private final SelenideElement archivedSwitcher;
+    private final ElementsCollection bubbles;
+    private final ElementsCollection bubblesArchived;
+    private final SelenideElement profilePic;
 
+    public ProfilePage(SelenideDriver driver) {
+        this.avatar = $("#image__input").parent().$("img");
+        this.userName = $("#username");
+        this.nameInput = $("#name");
+        this.photoInput = $("input[type='file']");
+        this.submitButton = $("button[type='submit']");
+        this.categoryInput = $("input[name='category']");
+        this.archivedSwitcher = $(".MuiSwitch-input");
+        this.bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
+        this.bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
+        this.profilePic = $(By.xpath("//img[contains(@src, 'data:image/jpeg')]"));
+    }
 
     public ProfilePage setName(String name) {
         nameInput.clear();
@@ -89,4 +110,17 @@ public class ProfilePage {
         $(".form__error").shouldHave(text(errorMessage));
         return this;
     }
+
+    public ProfilePage checkPhoto(BufferedImage expected) throws IOException {
+        Selenide.sleep(1000);
+        BufferedImage actualImage = ImageIO.read(Objects.requireNonNull(avatar.screenshot()));
+        assertFalse(
+                new ScreenDiffResult(
+                        actualImage, expected
+                ),
+                "Screen comparison failure"
+        );
+        return this;
+    }
+
 }
