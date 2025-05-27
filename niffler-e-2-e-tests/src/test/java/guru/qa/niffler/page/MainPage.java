@@ -3,9 +3,8 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.page.universalComponents.SpendingTable;
-import guru.qa.niffler.page.universalComponents.StatComponent;
-import org.apache.kafka.common.metrics.Stat;
+import guru.qa.niffler.page.component.SpendingTable;
+import guru.qa.niffler.page.component.StatComponent;
 import org.openqa.selenium.By;
 
 import static com.codeborne.selenide.Condition.text;

@@ -16,7 +16,7 @@ import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.page.ProfilePage;
-import guru.qa.niffler.page.universalComponents.SpendingTable;
+import guru.qa.niffler.page.component.SpendingTable;
 import guru.qa.niffler.utils.Browser;
 import guru.qa.niffler.utils.SelenideUtils;
 import org.junit.jupiter.params.ParameterizedTest;

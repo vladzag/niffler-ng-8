@@ -1,4 +1,4 @@
-package guru.qa.niffler.page.universalComponents;
+package guru.qa.niffler.page.component;
 
 import com.codeborne.selenide.*;
 import guru.qa.niffler.condition.Bubble;
@@ -15,7 +15,6 @@ import java.util.Objects;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
-import static guru.qa.niffler.condition.StatConditions.*;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 

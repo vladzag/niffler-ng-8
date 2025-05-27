@@ -4,6 +4,7 @@ import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.config.Config;
 import guru.qa.niffler.utils.ScreenDiffResult;
 import org.openqa.selenium.By;
 
@@ -18,6 +19,8 @@ import static com.codeborne.selenide.Selenide.$$;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class ProfilePage {
+
+    public static final String URL = Config.getInstance().frontUrl() + "profile";
 
     private final SelenideElement avatar;
     private final SelenideElement userName;
