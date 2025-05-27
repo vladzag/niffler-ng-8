@@ -1,5 +1,6 @@
 package guru.qa.niffler.page;
 
+import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Condition.text;
@@ -8,27 +9,36 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class LoginPage {
 
-    private final SelenideElement usernameInput = $("input[name='username']");
-    private final SelenideElement passwordInput = $("input[name='password']");
-    private final SelenideElement submitButton = $("button[type='submit']");
-    private final SelenideElement registerButton = $("a[href='/register']");
-    private final SelenideElement errorContainer = $(".form__error");
+    private final SelenideElement usernameInput;
+    private final SelenideElement passwordInput;
+    private final SelenideElement submitButton ;
+    private final SelenideElement registerButton;
+    private final SelenideElement errorContainer;
 
-    public RegisterPage doRegister() {
+    public LoginPage(SelenideDriver driver) {
+        this.usernameInput = driver.$("input[name='username']");
+        this.passwordInput = driver.$("input[name='password']");
+        this.submitButton = driver.$("button[type='submit']");
+        this.registerButton = driver.$("a[href='/register']");
+        this.errorContainer = driver.$(".form__error");
+
+    }
+
+
+    public void doRegister() {
         registerButton.click();
-        return new RegisterPage();
     }
 
-    public MainPage successLogin(String username, String password) {
+    public LoginPage successLogin(String username, String password) {
         login(username, password);
-        return new MainPage();
+        return this;
     }
 
-    public MainPage login(String username, String password) {
+    public LoginPage login(String username, String password) {
         usernameInput.setValue(username);
         passwordInput.setValue(password);
         submitButton.click();
-        return new MainPage();
+        return this;
     }
 
     public LoginPage checkError(String error) {

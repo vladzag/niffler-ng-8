@@ -1,9 +1,10 @@
 package guru.qa.niffler.page.universalComponents;
 
-import com.codeborne.selenide.ElementsCollection;
-import com.codeborne.selenide.SelenideElement;
+import com.codeborne.selenide.*;
 import guru.qa.niffler.condition.Bubble;
+import guru.qa.niffler.condition.Colour;
 import guru.qa.niffler.condition.StatConditions;
+import guru.qa.niffler.utils.ScreenDiffResult;
 import lombok.NonNull;
 
 import javax.imageio.ImageIO;
@@ -14,12 +15,20 @@ import java.util.Objects;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
+import static guru.qa.niffler.condition.StatConditions.*;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 public class StatComponent {
 
-    private final SelenideElement img = $("canvas[role='img']");
+    private final SelenideElement img;
 
-    private final ElementsCollection bubbles = $("#legend-container").$$("li");
+    private final ElementsCollection bubbles;
+
+    public StatComponent(SelenideDriver driver) {
+        this.img = $("canvas[role='img']");
+        this.bubbles = $("#legend-container").$$("li");
+    }
 
     public SelenideElement pieChartImage() {
         return img;
@@ -55,6 +64,27 @@ public class StatComponent {
 
     public StatComponent checkBubblesContains(Bubble... expectedBubbles) {
         bubbles.should(StatConditions.statBubblesContains(expectedBubbles));
+        return this;
+    }
+
+    public StatComponent checkBubblesContainsText(String... strings) {
+        bubbles.should(CollectionCondition.texts(strings));
+        return this;
+    }
+
+    public StatComponent checkStatisticImage(BufferedImage expectedImage) throws IOException {
+        Selenide.sleep(2000);
+        assertFalse(
+                new ScreenDiffResult(
+                        chartScreenshot(),
+                        expectedImage
+                ), "Screen comparison failure"
+        );
+        return this;
+    }
+
+    public StatComponent checkBubbles(Colour... expectedColors) {
+        bubbles.should(colour(expectedColors));
         return this;
     }
 }
