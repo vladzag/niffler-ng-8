@@ -5,6 +5,7 @@ import guru.qa.niffler.api.UserdataApi;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.UserJson;
 import io.qameta.allure.Step;
+import io.qameta.allure.okhttp3.AllureOkHttp3;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -21,7 +22,11 @@ public class UsersApiClient implements UsersClient {
 
     private static final Config CFG = Config.getInstance();
     private static final String defaultPassword = "12345";
-    private final OkHttpClient client = new OkHttpClient.Builder().build();
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .addNetworkInterceptor(new AllureOkHttp3()
+                    .setRequestTemplate("my-http-request.ftl")
+                    .setResponseTemplate("my-http-response.ftl"))
+            .build();
     private final Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(CFG.spendUrl())
             .client(client)
