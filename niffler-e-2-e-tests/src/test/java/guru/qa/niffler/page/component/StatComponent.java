@@ -5,6 +5,7 @@ import guru.qa.niffler.condition.Bubble;
 import guru.qa.niffler.condition.Colour;
 import guru.qa.niffler.condition.StatConditions;
 import guru.qa.niffler.utils.ScreenDiffResult;
+import io.qameta.allure.Step;
 import lombok.NonNull;
 
 import javax.imageio.ImageIO;
@@ -33,12 +34,13 @@ public class StatComponent {
         return img;
     }
 
+    @Step("Проверяем наличие описания {description} у пузыря с тратами")
     public StatComponent checkBubblesHasText(String description) {
         bubbles.find(text(description))
                 .should(visible);
         return this;
     }
-
+    @Step("Ожидаем загрузку диаграммы")
     public StatComponent waitForPieChartToLoad() {
         img.is(image, Duration.ofSeconds(5));
         return this;
@@ -50,27 +52,29 @@ public class StatComponent {
     private BufferedImage chartScreenshot() throws IOException {
         return ImageIO.read(Objects.requireNonNull(chart).screenshot());
     }
-
+    @Step("Проверяем наличие {expectedBubbles} с тратами")
     public StatComponent checkBubbles(Bubble... expectedBubbles) {
         bubbles.should(StatConditions.statBubbles(expectedBubbles));
         return this;
     }
-
+    @Step("Проверяем наличие {expectedBubbles} у пузыря с тратами в любом порядке")
     public StatComponent checkBubblesInAnyOrder(Bubble... expectedBubbles) {
         bubbles.should(StatConditions.statBubblesInAnyOrder(expectedBubbles));
         return this;
     }
 
+    @Step("Проверяем содержимое {expectedBubbles} у пузыря с тратами")
     public StatComponent checkBubblesContains(Bubble... expectedBubbles) {
         bubbles.should(StatConditions.statBubblesContains(expectedBubbles));
         return this;
     }
 
+    @Step("Проверяем наличие текста {strings} у пузыря с тратами")
     public StatComponent checkBubblesContainsText(String... strings) {
         bubbles.should(CollectionCondition.texts(strings));
         return this;
     }
-
+    @Step("Проверяем наличие изображения статистики у пузыря с тратами")
     public StatComponent checkStatisticImage(BufferedImage expectedImage) throws IOException {
         Selenide.sleep(2000);
         assertFalse(
@@ -81,7 +85,7 @@ public class StatComponent {
         );
         return this;
     }
-
+    @Step("Проверяем наличие цветов {expectedColors} у пузыря с тратами")
     public StatComponent checkBubbles(Colour... expectedColors) {
         bubbles.should(colour(expectedColors));
         return this;

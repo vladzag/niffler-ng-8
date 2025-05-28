@@ -13,6 +13,7 @@ import guru.qa.niffler.jupiter.converter.BrowserConverter;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.page.EditSpendingPage;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.page.ProfilePage;
@@ -25,6 +26,8 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+
+import static guru.qa.niffler.test.web.FriendsTest.USER_PW;
 
 @WebTest
 public class SpendingTest {
@@ -50,7 +53,8 @@ public class SpendingTest {
         new LoginPage(driver)
                 .successLogin(userJson.username(), userJson.testData().password());
 
-        new MainPage(driver).editSpending(userJson.testData().spendings().getFirst().description())
+        new MainPage(driver).editSpending(userJson.testData().spendings().getFirst().description());
+        new EditSpendingPage(driver)
                 .editDescription(newDescription)
                 .save();
 
@@ -234,7 +238,8 @@ public class SpendingTest {
         new LoginPage(driver).login(user.username(), user.testData().password());
         new MainPage(driver)
                 .getSpendingTable()
-                .editSpending("Обучение Advanced 2.0")
+                .editSpending("Обучение Advanced 2.0");
+        new EditSpendingPage(driver)
                 .setNewSpendingAmount(newAmount)
                 .saveSpending();
 
@@ -288,5 +293,21 @@ public class SpendingTest {
                 .checkStatisticImage(expected);
     }
 
+    @User(
+            spendings = {
+                    @Spend(
+                            category = "Обучение", description = "Обучение Advanced 2.0", amount = 79990, currency = CurrencyValues.RUB)
+            }
+    )
+    @ParameterizedTest
+    @EnumSource(Browser.class)
+    void createSpendingTest(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
+        driver.open(CFG.frontUrl());
+        new LoginPage(driver)
+                .successLogin(user.username(), USER_PW);
+        new SpendingTable()
+                .checkTableContainsSpending("Обучение Advanced 2.0");
+
+    }
 }
 

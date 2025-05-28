@@ -5,6 +5,9 @@ import guru.qa.niffler.data.dao.AuthAuthorityDao;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.mapper.AuthorityEntityRowMapper;
 import guru.qa.niffler.data.jdbc.DataSources;
+
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -13,14 +16,13 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
 
     private static final Config CFG = Config.getInstance();
     private final String url = Config.getInstance().authJdbcUrl();
 
     @Override
-    public void create(AuthorityEntity... authority) {
+    public void create(@NonNull AuthorityEntity... authority) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
         jdbcTemplate.batchUpdate(
                 "INSERT INTO authority (user_id, authority) VALUES (? , ?)",
@@ -40,7 +42,8 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
     }
 
     @Override
-    public List<AuthorityEntity> update(AuthorityEntity... authority) {
+    @NonNull
+    public List<AuthorityEntity> update(@NonNull AuthorityEntity... authority) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
         jdbcTemplate.batchUpdate(
                 "UPDATE \"authority\" SET user_id = ?, authority = ? WHERE id = ?",
@@ -62,6 +65,7 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
     }
 
     @Override
+    @NonNull
     public List<AuthorityEntity> findAll() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
         return jdbcTemplate.query(
@@ -71,7 +75,7 @@ public class AuthAuthorityDaoSpringJdbc implements AuthAuthorityDao {
     }
 
     @Override
-    public void remove(AuthorityEntity... authority) {
+    public void remove(@NonNull AuthorityEntity... authority) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
         jdbcTemplate.batchUpdate(
                 "DELETE FROM \"authority\" WHERE user_id = ?",
