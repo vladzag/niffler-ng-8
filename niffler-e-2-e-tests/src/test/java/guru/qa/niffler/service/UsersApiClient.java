@@ -11,13 +11,14 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
+@ParametersAreNonnullByDefault
 public class UsersApiClient implements UsersClient {
 
     private static final Config CFG = Config.getInstance();
@@ -37,7 +38,7 @@ public class UsersApiClient implements UsersClient {
     private final UserdataApi userdataApi = retrofit.create(UserdataApi.class);
 
     @Override
-    @Step("Create user using API")
+    @Step("Создать пользователя {username }с использованием API")
     public UserJson createUser(String username, String password) {
         try {
             authApi.requestRegisterForm().execute();
@@ -57,6 +58,7 @@ public class UsersApiClient implements UsersClient {
     }
 
     @Override
+    @Step("Создать входящие запросы дружбы у пользователя {targetuser} в количестве {count}")
     public void createIncomeInvitations(UserJson targetUser, int count) {
         if (count > 0) {
             for (int i = 0; i < count; i++) {
@@ -79,6 +81,7 @@ public class UsersApiClient implements UsersClient {
 
 
     @Override
+    @Step("Создать исходящие запросы дружбы у пользователя {targetuser} в количестве {count}")
     public void createOutcomeInvitations(UserJson targetUser, int count) {
         if (count > 0) {
             for (int i = 0; i < count; i++) {
@@ -100,6 +103,7 @@ public class UsersApiClient implements UsersClient {
     }
 
     @Override
+    @Step("Создать друзей пользователю {targetUser} в количестве {count}")
     public void createFriends(UserJson targetUser, int count) {
         if (count > 0) {
             for (int i = 0; i < count; i++) {

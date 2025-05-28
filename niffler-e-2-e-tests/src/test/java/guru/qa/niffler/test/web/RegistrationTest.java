@@ -27,7 +27,7 @@ public class RegistrationTest {
     void shouldRegisterNewUser(@ConvertWith(BrowserConverter.class) SelenideDriver driver) {
         String newUsername = randomUsername();
         String password = "12345";
-        driver.open(CFG.frontUrl(), LoginPage.class)
+        driver.open(RegisterPage.URL, LoginPage.class)
                 .doRegister();
         new RegisterPage(driver)
                 .fillRegisterPage(newUsername, password, password)
@@ -43,7 +43,7 @@ public class RegistrationTest {
         String existingUsername = "duck";
         String password = "12345";
 
-        driver.open(CFG.frontUrl(), LoginPage.class);
+        driver.open(RegisterPage.URL, LoginPage.class);
         new LoginPage(driver).doRegister();
         new RegisterPage(driver)
                 .fillRegisterPage(existingUsername, password, password)
@@ -57,7 +57,7 @@ public class RegistrationTest {
         String newUsername = randomUsername();
         String password = "12345";
 
-        driver.open(CFG.frontUrl(), LoginPage.class);
+        driver.open(RegisterPage.URL, LoginPage.class);
         new LoginPage(driver)
                 .doRegister();
         new RegisterPage(driver)

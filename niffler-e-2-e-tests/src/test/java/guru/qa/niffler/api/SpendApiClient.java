@@ -10,124 +10,133 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ParametersAreNonnullByDefault
 public class SpendApiClient {
 
-  private static final Config CFG = Config.getInstance();
+    private static final Config CFG = Config.getInstance();
 
-  private final OkHttpClient client = new OkHttpClient.Builder()
-          .addNetworkInterceptor(new AllureOkHttp3()
-                  .setRequestTemplate("my-http-request.ftl")
-                  .setResponseTemplate("my-http-response.ftl"))
-          .build();
-  private final Retrofit retrofit = new Retrofit.Builder()
-      .baseUrl(CFG.spendUrl())
-      .client(client)
-      .addConverterFactory(JacksonConverterFactory.create())
-      .build();
+    private final OkHttpClient client = new OkHttpClient.Builder()
+            .addNetworkInterceptor(new AllureOkHttp3()
+                    .setRequestTemplate("my-http-request.ftl")
+                    .setResponseTemplate("my-http-response.ftl"))
+            .build();
+    private final Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(CFG.spendUrl())
+            .client(client)
+            .addConverterFactory(JacksonConverterFactory.create())
+            .build();
 
-  private final SpendApi spendApi = retrofit.create(SpendApi.class);
+    private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
-  public SpendJson addSpend(SpendJson spend) {
-    final Response<SpendJson> response;
-    try {
-      response = spendApi.addSpend(spend)
-          .execute();
-    } catch (IOException e) {
-      throw new AssertionError(e);
+    public @Nullable SpendJson addSpend(SpendJson spend) {
+        final Response<SpendJson> response;
+        try {
+            response = spendApi.addSpend(spend)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(201, response.code());
+        return response.body();
     }
-    assertEquals(201, response.code());
-    return response.body();
-  }
 
-  public SpendJson editSpend(SpendJson spend) {
-    final Response<SpendJson> response;
-    try {
-      response = spendApi.editSpend(spend)
-          .execute();
-    } catch (IOException e) {
-      throw new AssertionError(e);
+    public @Nullable SpendJson editSpend(SpendJson spend) {
+        final Response<SpendJson> response;
+        try {
+            response = spendApi.editSpend(spend)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body();
     }
-    assertEquals(200, response.code());
-    return response.body();
-  }
 
-  public SpendJson getSpend(String id) {
-    final Response<SpendJson> response;
-    try {
-      response = spendApi.getSpend(id)
-          .execute();
-    } catch (IOException e) {
-      throw new AssertionError(e);
+    public @Nullable SpendJson getSpend(String id) {
+        final Response<SpendJson> response;
+        try {
+            response = spendApi.getSpend(id)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body();
     }
-    assertEquals(200, response.code());
-    return response.body();
-  }
 
-  public List<SpendJson> allSpends(String username,
-                                   CurrencyValues currency,
-                                   String from,
-                                   String to) {
-    final Response<List<SpendJson>> response;
-    try {
-      response = spendApi.allSpends(username, currency, from, to)
-          .execute();
-    } catch (IOException e) {
-      throw new AssertionError(e);
+    public @Nonnull List<SpendJson> allSpends(String username,
+                                               @Nonnull CurrencyValues currency,
+                                               @Nonnull String from,
+                                               @Nonnull String to) {
+        final Response<List<SpendJson>> response;
+        try {
+            response = spendApi.allSpends(username, currency, from, to)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body() != null
+                ? response.body()
+                : Collections.emptyList();
     }
-    assertEquals(200, response.code());
-    return response.body();
-  }
 
-  public void removeSpends(String username, String... ids) {
-    final Response<String> response;
-    try {
-      response = spendApi.removeSpends(username, Arrays.stream(ids).toList())
-          .execute();
-    } catch (IOException e) {
-      throw new AssertionError(e);
+    public @Nullable void removeSpends(String username, String... ids) {
+        final Response<String> response;
+        try {
+            response = spendApi.removeSpends(username, Arrays.stream(ids).toList())
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
     }
-    assertEquals(200, response.code());
-  }
 
-  public CategoryJson createCategory(CategoryJson category) {
-    final Response<CategoryJson> response;
-    try {
-      response = spendApi.addCategory(category)
-          .execute();
-    } catch (IOException e) {
-      throw new AssertionError(e);
+    public @Nullable CategoryJson createCategory(CategoryJson category) {
+        final Response<CategoryJson> response;
+        try {
+            response = spendApi.addCategory(category)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body();
     }
-    assertEquals(200, response.code());
-    return response.body();
-  }
 
-  public CategoryJson updateCategory(CategoryJson category) {
-    final Response<CategoryJson> response;
-    try {
-      response = spendApi.updateCategory(category)
-          .execute();
-    } catch (IOException e) {
-      throw new AssertionError(e);
+    public @Nullable CategoryJson updateCategory(CategoryJson category) {
+        final Response<CategoryJson> response;
+        try {
+            response = spendApi.updateCategory(category)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body();
     }
-    assertEquals(200, response.code());
-    return response.body();
-  }
 
-  public List<CategoryJson> allCategory(String username) {
-    final Response<List<CategoryJson>> response;
-    try {
-      response = spendApi.allCategories(username)
-          .execute();
-    } catch (IOException e) {
-      throw new AssertionError(e);
+    public @Nonnull List<CategoryJson> allCategory(String username) {
+        final Response<List<CategoryJson>> response;
+        try {
+            response = spendApi.allCategories(username)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(200, response.code());
+        return response.body() != null
+                ? response.body()
+                : Collections.emptyList();
     }
-    assertEquals(200, response.code());
-    return response.body();
-  }
 }

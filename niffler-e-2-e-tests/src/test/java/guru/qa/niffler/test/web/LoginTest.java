@@ -16,6 +16,7 @@ import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 public class LoginTest {
 
+
     private static final Config CFG = Config.getInstance();
 
     @RegisterExtension
@@ -25,7 +26,7 @@ public class LoginTest {
     @EnumSource(Browser.class)
     void mainPageShouldBeDisplayedAfterSuccessLogin(@ConvertWith(BrowserConverter.class) SelenideDriver driver) {
         browserExtension.add(driver);
-        driver.open(CFG.frontUrl());
+        driver.open(LoginPage.URL);
 
         new LoginPage(driver)
                 .successLogin("duck", "12345")
@@ -36,7 +37,7 @@ public class LoginTest {
     @EnumSource(Browser.class)
     void userShouldStayOnLoginPageAfterLoginWithBadCredentials(@ConvertWith(BrowserConverter.class) SelenideDriver driver) {
         browserExtension.add(driver);
-        driver.open(CFG.frontUrl());
+        driver.open(LoginPage.URL);
         new LoginPage(driver).login(randomUsername(), "BAD").checkError("Bad credentials");
 
         driver.$(".logo-section__text").should(text("Niffler"));

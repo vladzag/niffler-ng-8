@@ -102,7 +102,7 @@ public class UsersDbClient implements UsersClient {
 //        });
 //    }
 
-    @Step("Create user using SQL request")
+    @Step("Создать пользователя с использованием SQL запроса")
     public UserJson createUser(String username, String password) {
         return xaTransactionTemplate.execute(() -> {
                     AuthUserEntity authUser = authUserEntity(username, password);
@@ -113,17 +113,17 @@ public class UsersDbClient implements UsersClient {
                 }
         );
     }
-
+    @Step("Найти пользователя по имени пользователя")
     public Optional<UserJson> findByUsername(String username) {
         Optional<UserEntity> ue = udUserRepository.findByUsername(username);
         return ue.map(userEntity -> UserJson.fromEntity(userEntity, null));
     }
-
+    @Step("Найти пользователя по id")
     public Optional<UserJson> findById(UUID id) {
         Optional<UserEntity> ue = udUserRepository.findById(id);
         return ue.map(userEntity -> UserJson.fromEntity(userEntity, null));
     }
-
+    @Step("Отправить запрос дружбы")
     public void sendInvitation(UserJson user) {
         xaTransactionTemplate.execute(() -> {
             UserEntity requester = udUserRepository.findById(user.id()).orElseThrow();
@@ -137,7 +137,7 @@ public class UsersDbClient implements UsersClient {
             return null;
         });
     }
-
+    @Step("Обновить информацию о пользователе")
     public UserJson updateUserInfo(UserJson user) {
         return xaTransactionTemplate.execute(() -> {
                     UserEntity ueToUpdate = UserEntity.fromJson(user);
@@ -169,13 +169,13 @@ public class UsersDbClient implements UsersClient {
                 }
         );
     }
-
+    @Step("Установить дружбу между пользователями")
     public void addFriend(UserJson requester, UserJson addressee) {
         UserEntity sender = udUserRepository.findById(requester.id()).orElseThrow();
         UserEntity receiver = udUserRepository.findById(addressee.id()).orElseThrow();
         udUserRepository.addFriend(sender, receiver);
     }
-
+    @Step("Удалить пользователя")
     public void deleteUser(UserJson user) {
         xaTransactionTemplate.execute(() -> {
             UserEntity ueToDelete = udUserRepository.findById(
@@ -190,18 +190,18 @@ public class UsersDbClient implements UsersClient {
             return null;
         });
     }
-
+    @Step("Найти запросы дружбы по id")
     public List<FriendshipEntity> findInvitationByRequesterId(UUID id) {
         return udUserRepository.findInvitationByRequesterId(id);
     }
-
+    @Step("Найти сущность пользователя {username}")
     private UserEntity userEntity(String username) {
         UserEntity ue = new UserEntity();
         ue.setUsername(username);
         ue.setCurrency(CurrencyValues.RUB);
         return ue;
     }
-
+    @Step("Создать входящие запросы дружбы у пользователя {targetUser} в количестве {count}")
     public void createIncomeInvitations(UserJson targetUser, int count) {
         if (count > 0) {
             UserEntity targetEntity = udUserRepository.findById(
@@ -228,7 +228,7 @@ public class UsersDbClient implements UsersClient {
             }
         }
     }
-
+    @Step("Создать случайного пользователя")
     private UserEntity createRandomUser() {
         String username = randomUsername();
         AuthUserEntity authUser = authUserEntity(username, USER_PW);
@@ -236,7 +236,7 @@ public class UsersDbClient implements UsersClient {
         UserEntity addressee = udUserRepository.create(userEntity(username));
         return addressee;
     }
-
+    @Step("Создать исходящие запросы дружбы у пользователя {targetUser} в количестве {count}")
     public void createOutcomeInvitations(UserJson targetUser, int count) {
         if (count > 0) {
             UserEntity targetEntity = udUserRepository.findById(
@@ -263,7 +263,7 @@ public class UsersDbClient implements UsersClient {
             }
         }
     }
-
+    @Step("Создать друзей для {targetUser} в количестве {count}")
     public void createFriends(UserJson targetUser, int count) {
         if (count > 0) {
             UserEntity targetEntity = udUserRepository.findById(
@@ -290,7 +290,7 @@ public class UsersDbClient implements UsersClient {
             }
         }
     }
-
+    @Step("Создать сущность авторизованного пользователя")
     private AuthUserEntity authUserEntity(String username, String password) {
         AuthUserEntity authUser = new AuthUserEntity();
         authUser.setUsername(username);
@@ -312,7 +312,7 @@ public class UsersDbClient implements UsersClient {
         return authUser;
     }
 
-
+    @Step("Создать нового пользователя")
     public UserJson create(UserJson userJson) {
         return txTemplateWithChainedTxManager.execute(status -> {
                     AuthUserEntity aue = new AuthUserEntity();
@@ -336,6 +336,7 @@ public class UsersDbClient implements UsersClient {
         );
     }
 
+    @Step("Получить сущности авторизации")
     private static AuthorityEntity[] getAuthorityEntities(AuthUserEntity createdAuthUser) {
         AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
                 e -> {
@@ -348,16 +349,18 @@ public class UsersDbClient implements UsersClient {
         return authorityEntities;
     }
 
+    @Step("Поиск пользователя по его имени {username}")
     public Optional<UserEntity> findUserByUsername(String username) {
         return userSpringDao.findByUsername(username);
 
     }
 
+    @Step("Поиск пользователя по его {id}")
     public Optional<UserEntity> findUserByID(UUID id) {
         return udUserRepository.findById(id);
     }
 
-
+    @Step("Добавить друга")
     public void addFriend(UUID requesterUUID, UUID addresseeUUID) {
         UserEntity requester = new UserEntity();
         requester.setId(requesterUUID);
