@@ -7,7 +7,7 @@ import io.qameta.allure.Step;
 
 import static com.codeborne.selenide.Condition.text;
 
-public class RegisterPage {
+public class RegisterPage extends BasePage {
     public static final String URL = Config.getInstance().authUrl() + "register";
 
     private final SelenideElement usernameInput;

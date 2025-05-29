@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
-public class PeoplePage {
+public class PeoplePage extends BasePage {
 
     public static final String URL = Config.getInstance().frontUrl() + "people/all";
 
