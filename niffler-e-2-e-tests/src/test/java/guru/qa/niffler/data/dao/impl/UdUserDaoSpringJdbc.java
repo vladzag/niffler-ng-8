@@ -5,8 +5,8 @@ import guru.qa.niffler.data.dao.UdUserDao;
 import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.FriendshipStatus;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.data.mapper.UdUserEntityRowMapper;
 import guru.qa.niffler.data.jdbc.DataSources;
+import guru.qa.niffler.data.mapper.UdUserEntityRowMapper;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,14 +14,12 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.Nonnull;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class UdUserDaoSpringJdbc implements UdUserDao {
 
@@ -29,7 +27,8 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     private final String url = Config.getInstance().userdataJdbcUrl();
 
     @Override
-    public UserEntity create(UserEntity user) {
+    @Nonnull
+    public UserEntity create(@Nonnull UserEntity user) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
         KeyHolder kh = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {
@@ -54,7 +53,8 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     }
 
     @Override
-    public Optional<UserEntity> findById(UUID id) {
+    @Nonnull
+    public Optional<UserEntity> findById(@Nonnull UUID id) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
         return Optional.ofNullable(
                 jdbcTemplate.queryForObject(
@@ -66,7 +66,8 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     }
 
     @Override
-    public Optional<UserEntity> findByUsername(String username) {
+    @Nonnull
+    public Optional<UserEntity> findByUsername(@Nonnull String username) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
 
         return Optional.ofNullable(
@@ -79,6 +80,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     }
 
     @Override
+    @Nonnull
     public List<UserEntity> findAll() {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
         return jdbcTemplate.query(
@@ -88,7 +90,8 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     }
 
     @Override
-    public UserEntity update(UserEntity user) {
+    @Nonnull
+    public UserEntity update(@Nonnull UserEntity user) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
 
         jdbcTemplate.update(
@@ -144,7 +147,7 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     }
 
     @Override
-    public void remove(UserEntity user) {
+    public void remove(@Nonnull UserEntity user) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
 
         jdbcTemplate.update(
@@ -158,9 +161,10 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
     }
 
     @Override
-    public List<FriendshipEntity> findInvitationByRequesterId(UUID requesterId) {
+    @Nonnull
+    public List<FriendshipEntity> findInvitationByRequesterId(@Nonnull UUID requesterId) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(url));
-        return jdbcTemplate.query(
+        return Objects.requireNonNull(jdbcTemplate.query(
                 "SELECT * FROM friendship f " +
                         "LEFT JOIN \"user\" u ON f.requester_id = u.id " +
                         "WHERE f.requester_id = ?",
@@ -184,6 +188,6 @@ public class UdUserDaoSpringJdbc implements UdUserDao {
                     }
                 },
                 requesterId
-        );
+        ));
     }
 }

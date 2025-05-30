@@ -4,6 +4,10 @@ import guru.qa.niffler.model.UserJson;
 
 public interface UsersClient {
 
+    static UsersClient getInstance() {
+        return new UsersDbClient();
+    }
+
     UserJson createUser(String username, String password);
 
     void createIncomeInvitations(UserJson targetUser, int count);

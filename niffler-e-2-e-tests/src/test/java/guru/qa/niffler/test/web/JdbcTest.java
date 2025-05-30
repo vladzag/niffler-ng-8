@@ -1,31 +1,27 @@
 package guru.qa.niffler.test.web;
 
-import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
-import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.jupiter.extension.UsersClientExtension;
 import guru.qa.niffler.model.UserJson;
-import guru.qa.niffler.service.SpendDbClient;
-import guru.qa.niffler.service.UsersDbClient;
+import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-@Disabled
+@ExtendWith(UsersClientExtension.class)
 public class JdbcTest {
 
+
+    private UsersClient usersClient;
+
+    @ValueSource(strings = {"abc-111"})
+    @ParameterizedTest
+    void springJdbcTest(String name) {
+        UserJson user = usersClient.createUser(RandomDataUtils.randomUsername(), "12345");
+
+        usersClient.createIncomeInvitations(user, 1);
+        usersClient.createOutcomeInvitations(user, 1);
+    }
     /*@Test
     void txTest() {
         UsersDbClient usersDbClient = new UsersDbClient();
