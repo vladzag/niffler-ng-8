@@ -1,7 +1,9 @@
 package guru.qa.niffler.service;
 
 import guru.qa.niffler.api.AuthApi;
+import guru.qa.niffler.api.AuthApiClient;
 import guru.qa.niffler.api.UserdataApi;
+import guru.qa.niffler.api.UserdataApiClient;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.UserJson;
 import io.qameta.allure.Step;
@@ -13,6 +15,7 @@ import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.Objects;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static java.util.Objects.requireNonNull;
@@ -20,6 +23,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
 public class UsersApiClient implements UsersClient {
+
+    private final AuthApiClient authApiClient = new AuthApiClient();
+    private final UserdataApiClient userdataApiClient = new UserdataApiClient();
 
     private static final Config CFG = Config.getInstance();
     private static final String defaultPassword = "12345";
@@ -40,21 +46,11 @@ public class UsersApiClient implements UsersClient {
     @Override
     @Step("Создать пользователя {username }с использованием API")
     public UserJson createUser(String username, String password) {
-        try {
-            authApi.requestRegisterForm().execute();
-            authApi.register(
-                    username,
-                    password,
-                    password,
-                    null
-            ).execute();
-            UserJson createdUser = requireNonNull(userdataApi.currentUser(username).execute().body());
-            return createdUser.withPassword(
-                    defaultPassword
-            );
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        authApiClient.register(username, password);
+
+        return Objects.requireNonNull(
+                userdataApiClient.currentUser(username)
+        );
     }
 
     @Override

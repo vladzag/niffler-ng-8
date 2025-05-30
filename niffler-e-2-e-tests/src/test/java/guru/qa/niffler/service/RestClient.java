@@ -56,6 +56,7 @@ public abstract class RestClient {
                 .addConverterFactory(factory)
                 .build();
     }
-
-
+    public <T> T create(final Class<T> service) {
+        return this.retrofit.create(service);
+    }
 }

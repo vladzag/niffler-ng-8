@@ -5,7 +5,6 @@ import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.condition.SpendConditions;
 import guru.qa.niffler.model.DateAndTimePeriods;
 import guru.qa.niffler.model.SpendJson;
-import guru.qa.niffler.page.EditSpendingPage;
 import io.qameta.allure.Step;
 
 import java.util.Arrays;
@@ -20,7 +19,6 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.openqa.selenium.Keys.ENTER;
 
 public class SpendingTable {
 

@@ -240,7 +240,7 @@ public class SpendingTest {
                 .getSpendingTable()
                 .editSpending("Обучение Advanced 2.0");
         new EditSpendingPage(driver)
-                .setNewSpendingAmount(newAmount)
+                .setSpendingAmount(newAmount)
                 .saveSpending();
 
         new MainPage(driver).statComponent()
@@ -307,7 +307,23 @@ public class SpendingTest {
                 .successLogin(user.username(), USER_PW);
         new SpendingTable()
                 .checkTableContainsSpending("Обучение Advanced 2.0");
+    }
 
+    @User
+    @ParameterizedTest
+    @EnumSource(Browser.class)
+    void successMessageShouldAppearAfterSpendingCreation(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
+        driver.open(CFG.frontUrl());
+        new LoginPage(driver)
+                .successLogin(user.username(), "12345")
+                .checkThatPageLoaded();
+        new EditSpendingPage(driver)
+                .setSpendingAmount(5000)
+                .setCategoryName("Education")
+                .editDescription("Java Advanced 2.0")
+                .save();
+
+        new MainPage(driver).checkAlertMessage("New spending is successfully created");
     }
 }
 

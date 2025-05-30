@@ -8,4 +8,8 @@ public abstract class BaseComponent<T extends BaseComponent<?>> {
     public BaseComponent(SelenideElement self) {
         this.self = self;
     }
+
+    protected BaseComponent() {
+        self = null;
+    }
 }

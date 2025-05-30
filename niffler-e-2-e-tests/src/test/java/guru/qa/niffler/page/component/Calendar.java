@@ -9,11 +9,12 @@ import java.util.Optional;
 
 import static com.codeborne.selenide.SetValueOptions.withDate;
 
-public class Calendar {
+public class Calendar extends BaseComponent {
 
     private final SelenideElement self;
 
     public Calendar(SelenideElement self) {
+        super(self);
         this.self = self;
     }
 

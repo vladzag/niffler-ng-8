@@ -13,6 +13,4 @@ public abstract class BasePage<T extends BasePage<?>> {
         alert.should(Condition.text(text));
         return (T) this;
     }
-
-    ;
 }

@@ -24,6 +24,7 @@ public class MainPage extends BasePage {
     private final SelenideElement statComponent;
     private final SelenideElement spendingTable;
     private final SelenideElement searchInput;
+    private final SelenideElement newSpendingButton;
 
     public MainPage(SelenideDriver driver) {
         this.header = $("#root header");
@@ -32,6 +33,7 @@ public class MainPage extends BasePage {
         this.statComponent = $("#stat");
         this.spendingTable = $("#spendings");
         this.searchInput = $("input[placeholder='Search']");
+        this.newSpendingButton = $("a[href='/spending']");
     }
 
     @Step("Переход на страницу друзей")
@@ -104,5 +106,9 @@ public class MainPage extends BasePage {
     public StatComponent getStatComponent() {
         spendingTable.scrollIntoView(true);
         return (StatComponent) statComponent;
+    }
+    @Step("Создаем новый спендинг")
+    public void newSpending() {
+        newSpendingButton.click();
     }
 }
