@@ -99,12 +99,16 @@ public class SpendingTable {
 
     @Step("Проверяем наличие трат по описанию - '{expectedSpends}'")
     public void checkTableContains(String... expectedSpends) {
-        Set<String> actualSpends = tableRows
-                .stream()
-                .map(SelenideElement::getText).collect(Collectors.toSet());
-        assertTrue(
-                Arrays.stream(expectedSpends).collect(Collectors.toSet())
-                        .containsAll(actualSpends)
-        );
+        for (String spend: expectedSpends){
+            tableRows.findBy(text(spend)).shouldBe(visible);
+        }
+
+//        Set<String> actualSpends = tableRows
+//                .stream()
+//                .map(SelenideElement::getText).collect(Collectors.toSet());
+//        assertTrue(
+//                Arrays.stream(expectedSpends).collect(Collectors.toSet())
+//                        .containsAll(actualSpends)
+//        );
     }
 }

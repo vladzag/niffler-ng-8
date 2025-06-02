@@ -68,6 +68,7 @@ public class FriendsTest {
         new PeoplePage(driver)
                 .checkInvitationSentToUser(user.testData().outcomeInvitations().getFirst().username());
     }
+    @User(incomeInvitations = 1)
     @ParameterizedTest
     @EnumSource(Browser.class)
     void shouldBeAbleToAcceptFriendRequest(@ConvertWith(BrowserConverter.class) @UsersQueueExtension.UserType(WITH_INCOME_REQUEST) UserJson user) {
@@ -79,6 +80,7 @@ public class FriendsTest {
                 .checkUserHasExpectedAmountOfFriends(1);
     }
 
+    @User(incomeInvitations = 1)
     @ParameterizedTest
     @EnumSource(Browser.class)
     void shouldBeAbleToDeclineFriendRequest(@ConvertWith(BrowserConverter.class) @UsersQueueExtension.UserType(WITH_INCOME_REQUEST) UserJson user) {

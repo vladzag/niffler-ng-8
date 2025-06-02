@@ -13,7 +13,7 @@ public class SearchField {
 
     @Step("В поиск вводим '{query}'")
     public void search(String query) {
-        clearIfNotEmpty();
+        self.clear();
         self.setValue(query).pressEnter();
     }
 
