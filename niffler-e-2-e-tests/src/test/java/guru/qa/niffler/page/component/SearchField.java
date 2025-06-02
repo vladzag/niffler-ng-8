@@ -9,7 +9,10 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class SearchField extends BaseComponent {
 
-    private final SelenideElement self = $("input[aria-label='search']");
+    SelenideElement self;
+
+    public SearchField() {
+        super($("input[aria-label='search']"));    }
 
     @Step("В поиск вводим '{query}'")
     public void search(String query) {

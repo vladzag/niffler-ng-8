@@ -11,11 +11,10 @@ import static com.codeborne.selenide.SetValueOptions.withDate;
 
 public class Calendar extends BaseComponent {
 
-    private final SelenideElement self;
+    SelenideElement self;
 
     public Calendar(SelenideElement self) {
         super(self);
-        this.self = self;
     }
 
     public Calendar selectDateInCalendar(Date date) {
