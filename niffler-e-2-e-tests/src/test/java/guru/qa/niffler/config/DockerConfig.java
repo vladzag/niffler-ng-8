@@ -47,9 +47,4 @@ enum DockerConfig implements Config {
     public String currencyJdbcUrl() {
         return "";
     }
-
-    @Override
-    public String ghUrl() {
-        return "";
-    }
 }

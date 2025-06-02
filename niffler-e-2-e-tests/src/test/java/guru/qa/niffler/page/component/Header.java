@@ -6,10 +6,13 @@ import io.qameta.allure.Step;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
-public class Header {
-    private final SelenideElement self = $("#root header");
+public class Header extends BaseComponent {
     private final SelenideElement menuBtn = self.$("button");
     private final SelenideElement headerMenu = $("ul[role='menu']");
+
+    public Header(SelenideElement self) {
+        super($("#root header"));
+    }
 
     @Step("Проверяем содержимое шапки страницы")
     public void checkHeaderText() {

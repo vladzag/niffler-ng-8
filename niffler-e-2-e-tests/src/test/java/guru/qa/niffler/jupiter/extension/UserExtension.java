@@ -17,7 +17,7 @@ public class UserExtension implements
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UserExtension.class);
     private static final String defaultPassword = "12345";
 
-    private final UsersClient usersClient = new UsersDbClient();
+    private final UsersClient usersClient = UsersClient.getInstance();
 
     @Override
     public void beforeEach(ExtensionContext context) {

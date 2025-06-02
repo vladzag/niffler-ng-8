@@ -19,7 +19,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class StatComponent {
+public class StatComponent extends BaseComponent {
 
     private final SelenideElement img;
 

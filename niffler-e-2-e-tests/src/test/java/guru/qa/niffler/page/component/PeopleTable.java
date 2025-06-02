@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
-public class PeopleTable {
+public class PeopleTable extends BaseComponent {
 
     private final SelenideElement self = $("#all");
     private final SelenideElement prevBtn = $("button#page-prev");

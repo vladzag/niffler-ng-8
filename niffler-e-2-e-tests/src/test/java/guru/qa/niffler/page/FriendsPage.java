@@ -12,7 +12,7 @@ import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 
-public class FriendsPage {
+public class FriendsPage  extends BasePage {
   public static final String URL = Config.getInstance().frontUrl() + "people/friends";
 
   private final SelenideElement peopleTab = $("a[href='/people/friends']");

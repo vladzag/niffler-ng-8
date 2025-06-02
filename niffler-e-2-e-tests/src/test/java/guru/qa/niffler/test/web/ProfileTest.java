@@ -161,4 +161,19 @@ public class ProfileTest {
                 .editCategoryName(categoryName, newName)
                 .checkCategoryExists(newName);
     }
+
+    @User
+    @ParameterizedTest
+    @EnumSource(Browser.class)
+    void successMessageShouldAppearAfterSavingProfileChanges(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
+        final String name = RandomDataUtils.randomName();
+        driver.open(LoginPage.URL);
+        new LoginPage(driver)
+                .successLogin(user.username(), "12345")
+                .checkThatPageLoaded();
+        new ProfilePage(driver)
+                .setName(name)
+                .submitProfile()
+                .checkAlertMessage("Profile successfully updated");
+    }
 }
