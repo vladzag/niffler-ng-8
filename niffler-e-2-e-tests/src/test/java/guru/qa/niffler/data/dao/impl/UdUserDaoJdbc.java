@@ -6,14 +6,15 @@ import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.data.entity.userdata.FriendshipStatus;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.grpc.CurrencyValues;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.List;
 
 import static guru.qa.niffler.data.jdbc.Connections.holder;
 
@@ -25,7 +26,8 @@ public class UdUserDaoJdbc implements UdUserDao {
 
 
     @Override
-    public UserEntity create(UserEntity user) {
+    @NotNull
+    public UserEntity create(@NotNull UserEntity user) {
         try (PreparedStatement ps = holder(url).connection().prepareStatement(
                 "INSERT INTO \"user\" (username, currency, firstname, surname, photo, photo_small, full_name) " +
                         "VALUES (?,?,?,?,?,?,?)",
@@ -54,7 +56,8 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
 
     @Override
-    public UserEntity update(UserEntity user) {
+    @NotNull
+    public UserEntity update(@NotNull UserEntity user) {
         try (PreparedStatement userPs = holder(url).connection().prepareStatement(
                 "UPDATE \"user\" SET username = ?, currency = ?, firstname = ?, surname = ?, photo = ?, photo_small = ?, full_name = ? WHERE id = ?");
              PreparedStatement friendshipPs = holder(url).connection().prepareStatement(
@@ -98,7 +101,8 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
 
     @Override
-    public Optional<UserEntity> findById(UUID id) {
+    @NotNull
+    public Optional<UserEntity> findById(@NotNull UUID id) {
         try (PreparedStatement ps = holder(url).connection().prepareStatement(
                 "SELECT * FROM \"user\" WHERE id = ? "
         )) {
@@ -126,7 +130,8 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
 
     @Override
-    public Optional<UserEntity> findByUsername(String username) {
+    @NotNull
+    public Optional<UserEntity> findByUsername(@NotNull String username) {
         try (PreparedStatement ps = holder(url).connection().prepareStatement(
                 "SELECT * FROM \"user\" WHERE username = ?"
         )) {
@@ -156,6 +161,7 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
 
     @Override
+    @NotNull
     public List<UserEntity> findAll() {
         try (PreparedStatement ps = holder(url).connection().prepareStatement(
                 "SELECT * FROM \"user\"")) {
@@ -182,12 +188,12 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
 
     @Override
-    public void remove(UserEntity user) {
-        try (   PreparedStatement fPs = holder(url).connection().prepareStatement(
+    public void remove(@NotNull UserEntity user) {
+        try (PreparedStatement fPs = holder(url).connection().prepareStatement(
                 "DELETE FROM friendship WHERE requester_id = ? OR addressee_id = ?"
         );
-                PreparedStatement userPs = holder(url).connection().prepareStatement(
-                        "DELETE FROM \"user\" WHERE id = ?")) {
+             PreparedStatement userPs = holder(url).connection().prepareStatement(
+                     "DELETE FROM \"user\" WHERE id = ?")) {
 
             fPs.setObject(1, user.getId());
             fPs.setObject(2, user.getId());
@@ -202,8 +208,9 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
 
     @Override
-    public List<FriendshipEntity> findInvitationByRequesterId(UUID requesterId) {
-        try( PreparedStatement ps = holder(url).connection().prepareStatement(
+    @NotNull
+    public List<FriendshipEntity> findInvitationByRequesterId(@NotNull UUID requesterId) {
+        try (PreparedStatement ps = holder(url).connection().prepareStatement(
                 "SELECT * FROM friendship f LEFT JOIN \"user\" u ON f.requester_id = u.id WHERE f.requester_id = ?"
         )) {
             ps.setObject(1, requesterId);

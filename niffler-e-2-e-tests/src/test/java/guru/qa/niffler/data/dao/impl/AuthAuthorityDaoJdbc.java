@@ -6,6 +6,7 @@ import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 
+import javax.annotation.Nonnull;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -24,7 +25,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
 
 
     @Override
-    public void create(AuthorityEntity... authority) {
+    public void create(@Nonnull AuthorityEntity... authority) {
         try (PreparedStatement ps = holder(url).connection().prepareStatement(
                 "INSERT INTO \"authority\" (user_id, authority) VALUES (?, ?)")) {
             for (AuthorityEntity a : authority) {
@@ -40,7 +41,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     }
 
     @Override
-    public List<AuthorityEntity> update(AuthorityEntity... authority) {
+    public List<AuthorityEntity> update(@Nonnull AuthorityEntity... authority) {
         try (PreparedStatement ps = holder(url).connection().prepareStatement(
                 "UPDATE \"authority\" SET user_id = ?, authority = ? WHERE id = ?")) {
             for (AuthorityEntity a : authority) {
@@ -82,7 +83,7 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     }
 
     @Override
-    public void remove(AuthorityEntity... authority) {
+    public void remove(@Nonnull AuthorityEntity... authority) {
         try (PreparedStatement ps = holder(url).connection().prepareStatement(
                 "DELETE FROM \"authority\" WHERE user_id = ?")) {
             for (AuthorityEntity a : authority) {

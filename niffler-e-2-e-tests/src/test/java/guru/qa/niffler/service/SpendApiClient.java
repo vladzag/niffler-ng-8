@@ -4,6 +4,7 @@ import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
+import io.qameta.allure.Step;
 import io.qameta.allure.okhttp3.AllureOkHttp3;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
@@ -32,7 +33,7 @@ public class SpendApiClient implements SpendClient {
             .build();
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
 
-
+    @Step("Удалить расходы у пользователя {username}")
     public void removeSpends(String username, List<String> ids) {
         final Response<String> response;
         try {
@@ -45,6 +46,7 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
+    @Step("Создать траты {spend}")
     public SpendJson createSpend(SpendJson spend) {
         final Response<SpendJson> response;
         try {
@@ -58,6 +60,7 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
+    @Step("Обновить трату {spend}")
     public SpendJson update(SpendJson spend) {
         final Response<SpendJson> response;
         try {
@@ -69,7 +72,7 @@ public class SpendApiClient implements SpendClient {
         assertEquals(200, response.code());
         return response.body();
     }
-
+    @Step("Создать категорию {category}")
     public CategoryJson createCategory(CategoryJson category) {
         final Response<CategoryJson> response;
         try {
@@ -83,20 +86,22 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
+    @Step("Найти категорию по {id}]")
     public Optional<CategoryJson> findCategoryById(UUID id) {
         throw new UnsupportedOperationException("NYI method findCategoryById");
 
     }
-
+    @Step("Найти категорию по {id}]")
     public Optional<SpendJson> findById(UUID id) {
         throw new UnsupportedOperationException("NYI method findById");
 
     }
-
+    @Step("Найти расход у пользователя: {username} с описанием {description}")
     public Optional<SpendJson> findByUsernameAndSpendDescription(String username, String description) {
         throw new UnsupportedOperationException("NYI method findByUsernameAndSpendDescription");
     }
 
+@Step("Удалить трату {spend}")
     public void remove(SpendJson spend) {
         final Response<String> response;
         try {
@@ -109,6 +114,7 @@ public class SpendApiClient implements SpendClient {
     }
 
     @Override
+    @Step("Удалить категорию")
     public void removeCategory(CategoryJson category) {
         throw new UnsupportedOperationException("NYI method for category removal");
     }
