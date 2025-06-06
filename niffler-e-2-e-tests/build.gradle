@@ -148,5 +148,23 @@ test {
     }
     testLogging.showStandardStreams = true
     testLogging.exceptionFormat = 'full'
-    useJUnitPlatform()
+    useJUnitPlatform { excludeTags("EMPTY_DB", "FULL_DB") }
+    shouldRunAfter("dbEmpty")
+}
+
+tasks.register("dbEmpty", Test) {
+    useJUnitPlatform {
+        includeTags "EMPTY_DB"
+    }
+}
+
+tasks.register("dbFull", Test) {
+    useJUnitPlatform {
+        includeTags "FULL_DB"
+    }
+    shouldRunAfter(test)
+    /*
+    ↑ аккуратное решение;
+    простое решение — добавить @Oder(1), @Order(Integer.MAX_VALUE)/@Isolated.
+     */
 }

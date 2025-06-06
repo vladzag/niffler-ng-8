@@ -16,4 +16,6 @@ public interface UsersClient {
 
     void createFriends(UserJson targetUser, int count);
 
+
+
 }
