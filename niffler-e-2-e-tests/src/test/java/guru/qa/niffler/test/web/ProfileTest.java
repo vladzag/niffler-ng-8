@@ -2,6 +2,7 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideDriver;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -34,15 +35,10 @@ public class ProfileTest {
     )
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void archivedCategoryShouldPresentInCategoriesList(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
         final CategoryJson archivedCategory = user.testData().categories().getFirst();
-
-        driver.open(ProfilePage.URL);
-        new LoginPage(driver)
-                .successLogin(user.username(), user.testData().password())
-                .checkThatPageLoaded();
-
-        driver.open(ProfilePage.URL, ProfilePage.class)
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .checkArchivedCategoryExists(archivedCategory.name());
     }
 
@@ -53,13 +49,9 @@ public class ProfileTest {
     )
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void activeCategoryShouldPresentInCategoriesList(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson userJson) {
-        driver.open(ProfilePage.URL);
-        new LoginPage(driver)
-                .successLogin(userJson.username(), userJson.testData().password())
-                .checkThatPageLoaded();
-
-        driver.open(ProfilePage.URL, ProfilePage.class)
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
                 .checkCategoryExists(String.valueOf(userJson.testData().categories().getFirst()));
     }
 
@@ -67,13 +59,12 @@ public class ProfileTest {
     @ScreenShotTest("img/expected/expected-dog.png")
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void shouldUpdateProfileImageWhenUploadNewImage(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user, BufferedImage expected) throws IOException {
         final String newName = randomName();
 
-        driver.open(ProfilePage.URL);
-        new LoginPage(driver)
-                .login(user.username(), user.testData().password())
-                .checkThatPageLoaded();
+        Selenide.open(ProfilePage.URL, ProfilePage.class);
+
         new MainPage(driver)
                 .goToProfilePage();
         new ProfilePage(driver)
@@ -92,13 +83,12 @@ public class ProfileTest {
     @ScreenShotTest("img/expected/expected-scientist.png")
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void shouldUpdateProfileImageWhenUpdateImage(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user, BufferedImage expected) throws IOException {
         final String newName = randomName();
 
-        driver.open(ProfilePage.URL);
-        new LoginPage(driver)
-                .login(user.username(), user.testData().password())
-                .checkThatPageLoaded();
+        Selenide.open(ProfilePage.URL, ProfilePage.class);
+
         new MainPage(driver)
                 .goToProfilePage();
         new ProfilePage(driver)
@@ -124,12 +114,10 @@ public class ProfileTest {
     @User
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void userInfoShouldBeSavedAfterEditing(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
         final String name = RandomDataUtils.randomName();
-        driver.open(ProfilePage.URL);
-        new LoginPage(driver)
-                .successLogin(user.username(), USER_PWRD)
-                .checkThatPageLoaded();
+        Selenide.open(ProfilePage.URL, ProfilePage.class);
         new MainPage(driver)
                 .goToProfilePage();
         new ProfilePage(driver)
@@ -147,13 +135,11 @@ public class ProfileTest {
     )
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void userCategoriesShouldBeSavedAfterEditing(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
         final String categoryName = user.testData().categories().get(0).name();
         final String newName = RandomDataUtils.randomCategoryName();
-        driver.open(ProfilePage.URL);
-        new LoginPage(driver)
-                .successLogin(user.username(), USER_PWRD)
-                .checkThatPageLoaded();
+        Selenide.open(ProfilePage.URL, ProfilePage.class);
         new MainPage(driver)
                 .goToProfilePage();
         new ProfilePage(driver)
@@ -165,12 +151,10 @@ public class ProfileTest {
     @User
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void successMessageShouldAppearAfterSavingProfileChanges(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
         final String name = RandomDataUtils.randomName();
-        driver.open(LoginPage.URL);
-        new LoginPage(driver)
-                .successLogin(user.username(), "12345")
-                .checkThatPageLoaded();
+        Selenide.open(ProfilePage.URL, ProfilePage.class);
         new ProfilePage(driver)
                 .setName(name)
                 .submitProfile()

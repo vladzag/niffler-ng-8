@@ -5,6 +5,7 @@ import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.condition.Bubble;
 import guru.qa.niffler.condition.Colour;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spend;
 import guru.qa.niffler.jupiter.annotation.User;
@@ -20,6 +21,7 @@ import guru.qa.niffler.page.ProfilePage;
 import guru.qa.niffler.page.component.SpendingTable;
 import guru.qa.niffler.utils.Browser;
 import guru.qa.niffler.utils.SelenideUtils;
+import org.apache.kafka.common.security.auth.Login;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -46,14 +48,12 @@ public class SpendingTest {
     )
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void categoryDescriptionShouldBeChangedFromTable(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson userJson) {
         final String newDescription = "Обучение Niffler Next Generation";
 
-        driver.open(CFG.frontUrl());
-        new LoginPage(driver)
-                .successLogin(userJson.username(), userJson.testData().password());
-
-        new MainPage(driver).editSpending(userJson.testData().spendings().getFirst().description());
+        Selenide.open(MainPage.URL, MainPage.class)
+                .editSpending(userJson.testData().spendings().getFirst().description());
         new EditSpendingPage(driver)
                 .editDescription(newDescription)
                 .save();
@@ -64,12 +64,10 @@ public class SpendingTest {
     @ScreenShotTest("img/expected/expected-stat.png")
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void checkStatComponentTest(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user, BufferedImage expected) throws IOException {
-        driver.open(CFG.authUrl());
-        new LoginPage(driver)
-                .login(user.username(), user.testData().password());
-
-        new MainPage(driver).getStatComponent()
+        Selenide.open(MainPage.URL, MainPage.class)
+                .getStatComponent()
                 .waitForPieChartToLoad()
                 .checkBubblesContainsText("Обучение 79990 ₽")
                 .checkStatisticImage(expected)
@@ -91,12 +89,10 @@ public class SpendingTest {
     )
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void checkBubblesTest(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) throws InterruptedException {
-        driver.open(CFG.authUrl());
-        new LoginPage(driver)
-                .login(user.username(), user.testData().password());
-
-        new MainPage(driver).getStatComponent()
+        Selenide.open(MainPage.URL, MainPage.class)
+                .getStatComponent()
                 .waitForPieChartToLoad()
                 .checkBubbles(
                         new Bubble(Colour.yellow, "Обучение 79990 ₽"),
@@ -118,12 +114,10 @@ public class SpendingTest {
     )
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void checkBubblesInAnyOderTest(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
-        driver.open(CFG.authUrl());
-        new LoginPage(driver)
-                .login(user.username(), user.testData().password());
-
-        new MainPage(driver).getStatComponent()
+        Selenide.open(MainPage.URL, MainPage.class)
+                .getStatComponent()
                 .waitForPieChartToLoad()
                 .checkBubblesInAnyOrder(
                         new Bubble(Colour.orange, "Рыбалка 1000 ₽"),
@@ -153,12 +147,10 @@ public class SpendingTest {
     )
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void checkBubblesContainsTest(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
-        driver.open(CFG.authUrl());
-        new LoginPage(driver)
-                .login(user.username(), user.testData().password());
-
-        new MainPage(driver).getStatComponent()
+        Selenide.open(MainPage.URL, MainPage.class)
+                .getStatComponent()
                 .waitForPieChartToLoad()
                 .checkBubblesContains(
                         new Bubble(Colour.yellow, "Обучение 79990 ₽"),
@@ -187,11 +179,9 @@ public class SpendingTest {
     )
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void spendingTableShouldContainInfo(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
-        driver.open(CFG.authUrl());
-        new LoginPage(driver)
-                .login(user.username(), user.testData().password());
-        new MainPage(driver)
+        Selenide.open(MainPage.URL, MainPage.class)
                 .getSpendingTable()
                 .editSpending("Обучение Advanced 2.0");
 
@@ -208,11 +198,9 @@ public class SpendingTest {
     @ScreenShotTest("img/expected/expected-empty-spendings.png")
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void shouldUpdateStatAfterSpendingIsRemoved(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user, BufferedImage expected) throws IOException {
-        driver.open(CFG.authUrl());
-        new LoginPage(driver).login(user.username(), user.testData().password());
-
-        new MainPage(driver)
+        Selenide.open(MainPage.URL, MainPage.class)
                 .getSpendingTable()
                 .deleteSpending("Обучение Advanced 2.0")
                 .checkTableSize(0);
@@ -232,11 +220,10 @@ public class SpendingTest {
     @ScreenShotTest("img/expected/expected-updated-spending.png")
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void shouldUpdateStatAfterSpendingIsUpdated(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user, BufferedImage expected) throws IOException {
         final int newAmount = 5000;
-        driver.open(CFG.authUrl());
-        new LoginPage(driver).login(user.username(), user.testData().password());
-        new MainPage(driver)
+        Selenide.open(MainPage.URL, MainPage.class)
                 .getSpendingTable()
                 .editSpending("Обучение Advanced 2.0");
         new EditSpendingPage(driver)
@@ -256,12 +243,9 @@ public class SpendingTest {
     @ScreenShotTest("img/expected/expected-stat.png")
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void shouldUpdateStatAfterCategoryIsArchived(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user, BufferedImage expected) throws IOException {
-        driver.open(CFG.authUrl());
-        new LoginPage(driver)
-                .login(user.username(), user.testData().password());
-
-        new MainPage(driver)
+        Selenide.open(MainPage.URL, MainPage.class)
                 .goToProfilePage();
         new ProfilePage(driver)
                 .updateCategory("Обучение");
@@ -284,11 +268,10 @@ public class SpendingTest {
     )
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void overwriteScreenshotTest(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user, BufferedImage expected) throws IOException {
-        driver.open(CFG.authUrl());
-        new LoginPage(driver)
-                .login(user.username(), user.testData().password());
-        new MainPage(driver).statComponent()
+        Selenide.open(MainPage.URL, MainPage.class)
+                .statComponent()
                 .waitForPieChartToLoad()
                 .checkStatisticImage(expected);
     }

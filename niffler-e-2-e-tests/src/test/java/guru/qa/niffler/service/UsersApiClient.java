@@ -13,6 +13,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 import java.util.Collections;
@@ -137,5 +138,51 @@ public class UsersApiClient implements UsersClient {
         return response.body() != null
                 ? response.body()
                 : Collections.emptyList();
+    }
+
+    @Step("Получаем всех друзей '{username}'")
+    @Nonnull
+    public List<UserJson> friends(String username) {
+        final Response<List<UserJson>> response;
+
+        try {
+            response = userdataApi.friends(
+                    username,
+                    null
+            ).execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        assertEquals(200, response.code());
+
+        if (response.isSuccessful() && response.body() != null) {
+            return response.body();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @Step("Получаем список 'Все пользователи' для '{username}'")
+    @Nonnull
+    public List<UserJson> allPeople(String username) {
+        final Response<List<UserJson>> response;
+
+        try {
+            response = userdataApi.allUsers(
+                    username,
+                    null
+            ).execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        assertEquals(200, response.code());
+
+        if (response.isSuccessful() && response.body() != null) {
+            return response.body();
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

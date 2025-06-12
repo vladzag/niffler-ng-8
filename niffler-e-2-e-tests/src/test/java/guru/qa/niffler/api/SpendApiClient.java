@@ -5,6 +5,7 @@ import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.RestClient;
+import io.qameta.allure.Step;
 import io.qameta.allure.okhttp3.AllureOkHttp3;
 import okhttp3.OkHttpClient;
 import retrofit2.Response;
@@ -81,9 +82,9 @@ public class SpendApiClient extends RestClient {
     }
 
     public @Nonnull List<SpendJson> allSpends(String username,
-                                               @Nonnull CurrencyValues currency,
-                                               @Nonnull String from,
-                                               @Nonnull String to) {
+                                              @Nonnull CurrencyValues currency,
+                                              @Nonnull String from,
+                                              @Nonnull String to) {
         final Response<List<SpendJson>> response;
         try {
             response = spendApi.allSpends(username, currency, from, to)
@@ -144,5 +145,52 @@ public class SpendApiClient extends RestClient {
         return response.body() != null
                 ? response.body()
                 : Collections.emptyList();
+    }
+
+    @Step("Получаем все категории для '{username}'")
+    @Nonnull
+    public List<CategoryJson> getAllCategories(String username) {
+        final Response<List<CategoryJson>> response;
+
+        try {
+            response = spendApi.allCategories(username)
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+
+        assertEquals(200, response.code());
+
+        if (response.isSuccessful() && response.body() != null) {
+            return response.body();
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
+    @Step("Получаем все траты '{username}'")
+    @Nonnull
+    public List<SpendJson> allSpends(String username) {
+        final Response<List<SpendJson>> response;
+
+        try {
+            response = spendApi.allSpends(
+                            username,
+                            null,
+                            null,
+                            null
+                    )
+                    .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+
+        assertEquals(200, response.code());
+
+        if (response.isSuccessful() && response.body() != null) {
+            return response.body();
+        } else {
+            return Collections.emptyList();
+        }
     }
 }

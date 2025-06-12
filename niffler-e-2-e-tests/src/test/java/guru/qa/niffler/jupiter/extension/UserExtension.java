@@ -29,10 +29,7 @@ public class UserExtension implements
                         usersClient.createIncomeInvitations(user, userAnno.incomeInvitations());
                         usersClient.createOutcomeInvitations(user, userAnno.outcomeInvitations());
                         usersClient.createFriends(user, userAnno.friends());
-                        context.getStore(NAMESPACE).put(
-                                context.getUniqueId(),
-                                user
-                        );
+                        setUser(user);
                     }
                 });
     }
@@ -46,6 +43,13 @@ public class UserExtension implements
     public UserJson resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         return createdUser();
     }
+
+    public static void setUser(UserJson user) {
+        final ExtensionContext context = TestsMethodContextExtension.context();
+        context.getStore(NAMESPACE).put(
+                context.getUniqueId(),
+                user
+        );    }
 
     public static @Nullable UserJson createdUser() {
         final ExtensionContext context = TestsMethodContextExtension.context();
