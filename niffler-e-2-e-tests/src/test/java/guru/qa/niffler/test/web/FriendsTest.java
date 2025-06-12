@@ -1,6 +1,8 @@
 package guru.qa.niffler.test.web;
 
+import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideDriver;
+import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.jupiter.converter.BrowserConverter;
@@ -27,54 +29,44 @@ public class FriendsTest {
     @User(friends = 1)
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void friendShouldBePresentInFriendsTable(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
-        driver.open(FriendsPage.URL, LoginPage.class)
-                .successLogin(user.username(), USER_PW)
-                .checkThatPageLoaded();
-        new FriendsPage(driver)
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .checkUserHasExpectedAmountOfFriends(1);
     }
 
     @User
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void friendsTableShouldBeEmptyForNewUser(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
-        driver.open(FriendsPage.URL, LoginPage.class)
-                .successLogin(user.username(), USER_PW)
-                .checkThatPageLoaded();
-        new FriendsPage(driver)
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .checkUserHasExpectedAmountOfFriends(0);
     }
 
     @User(incomeInvitations = 1)
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void incomeInvitationBePresentInFriendsTable(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
-        driver.open(FriendsPage.URL, LoginPage.class)
-                .successLogin(user.username(), USER_PW)
-                .checkThatPageLoaded();
-        new FriendsPage(driver)
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .checkExistingInvitations(user.testData().outcomeInvitations().getFirst().username());
     }
 
     @User(outcomeInvitations = 1)
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void outcomeInvitationBePresentInAllPeoplesTable(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
-        driver.open(FriendsPage.URL, LoginPage.class)
-                .successLogin(user.username(), USER_PW)
-                .checkThatPageLoaded();
-        new PeoplePage(driver)
+        Selenide.open(PeoplePage.URL, PeoplePage.class)
                 .checkInvitationSentToUser(user.testData().outcomeInvitations().getFirst().username());
     }
     @User(incomeInvitations = 1)
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void shouldBeAbleToAcceptFriendRequest(@ConvertWith(BrowserConverter.class) @UsersQueueExtension.UserType(WITH_INCOME_REQUEST) UserJson user) {
-        driver.open(FriendsPage.URL, LoginPage.class)
-                .successLogin(user.username(), USER_PW)
-                .checkThatPageLoaded();
-        driver.open(FriendsPage.URL, FriendsPage.class)
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .acceptFriendInvitation()
                 .checkUserHasExpectedAmountOfFriends(1);
     }
@@ -82,11 +74,9 @@ public class FriendsTest {
     @User(incomeInvitations = 1)
     @ParameterizedTest
     @EnumSource(Browser.class)
+    @ApiLogin
     void shouldBeAbleToDeclineFriendRequest(@ConvertWith(BrowserConverter.class) @UsersQueueExtension.UserType(WITH_INCOME_REQUEST) UserJson user) {
-        driver.open(FriendsPage.URL, LoginPage.class)
-                .successLogin(user.username(), USER_PW)
-                .checkThatPageLoaded();
-        driver.open(FriendsPage.URL, FriendsPage.class)
+        Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .declineFriendInvitation()
                 .checkUserHasExpectedAmountOfFriends(0);
     }
