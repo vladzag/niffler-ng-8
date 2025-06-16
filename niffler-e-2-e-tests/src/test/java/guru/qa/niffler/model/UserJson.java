@@ -39,7 +39,7 @@ public record UserJson(
                 entity.getFirstname(),
                 entity.getSurname(),
                 entity.getFullname(),
-                entity.getCurrency(),
+                null,
                 entity.getPhoto() != null && entity.getPhoto().length > 0 ? new String(entity.getPhoto(), StandardCharsets.UTF_8) : null,
                 entity.getPhotoSmall() != null && entity.getPhotoSmall().length > 0 ? new String(entity.getPhotoSmall(), StandardCharsets.UTF_8) : null,
                 friendshipStatus,
@@ -72,5 +72,12 @@ public record UserJson(
                 photoSmall,
                 friendshipStatus,
                 testData);
+    }
+    public UserJson(String username) {
+        this(username, null);
+    }
+
+    public UserJson(String username, TestData testData) {
+        this(null, username, null, null, null, null, null, null, null, testData);
     }
 }
