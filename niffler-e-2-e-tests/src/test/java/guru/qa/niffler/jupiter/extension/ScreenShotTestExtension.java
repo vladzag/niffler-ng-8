@@ -5,10 +5,15 @@ import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.model.allure.ScreenDif;
 import io.qameta.allure.Allure;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.extension.*;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.ParameterResolutionException;
+import org.junit.jupiter.api.extension.ParameterResolver;
+import org.junit.jupiter.api.extension.TestExecutionExceptionHandler;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.springframework.core.io.ClassPathResource;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -16,9 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
 
+@ParametersAreNonnullByDefault
 public class ScreenShotTestExtension implements ParameterResolver, TestExecutionExceptionHandler {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(ScreenShotTestExtension.class);
+    public static final String ASSERT_SCREEN_MESSAGE = "Screen comparison failure";
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
     private static final Base64.Encoder encoder = Base64.getEncoder();
@@ -32,25 +39,29 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
     @SneakyThrows
     @Override
     public BufferedImage resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return ImageIO.read(new ClassPathResource(extensionContext.getRequiredTestMethod().getAnnotation(ScreenShotTest.class).value()).getInputStream());
+        final ScreenShotTest screenShotTest = extensionContext.getRequiredTestMethod().getAnnotation(ScreenShotTest.class);
+        return ImageIO.read(
+                new ClassPathResource(
+                        screenShotTest.value()
+                ).getInputStream()
+        );
     }
 
     @Override
     public void handleTestExecutionException(ExtensionContext context, Throwable throwable) throws Throwable {
-        ScreenShotTest anno = context.getRequiredTestMethod().getAnnotation(ScreenShotTest.class);
-
-        if (anno.rewriteExpected()) {
-            String path = String.format("niffler-e-2-e-tests/src/test/resources/%s", anno.value());
-            try {
+        final ScreenShotTest screenShotTest = context.getRequiredTestMethod().getAnnotation(ScreenShotTest.class);
+        if (screenShotTest.rewriteExpected()) {
+            final BufferedImage actual = getActual();
+            if (actual != null) {
                 ImageIO.write(
-                        getActual(), "png",
-                        new File(path).getAbsoluteFile()
+                        actual,
+                        "png",
+                        new File("src/test/resources/" + screenShotTest.value())
                 );
-            } catch (IOException e) {
-                throw new RuntimeException(e);
             }
         }
-        if (throwable.getMessage().contains("Screen comparison failure")) {
+
+        if (throwable.getMessage().contains(ASSERT_SCREEN_MESSAGE)) {
             ScreenDif screenDif = new ScreenDif(
                     "data:image/png;base64," + encoder.encodeToString(imageToBytes(getExpected())),
                     "data:image/png;base64," + encoder.encodeToString(imageToBytes(getActual())),
@@ -62,32 +73,32 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
                     "application/vnd.allure.image.diff",
                     objectMapper.writeValueAsString(screenDif)
             );
-            throw throwable;
         }
+        throw throwable;
     }
 
     public static void setExpected(BufferedImage expected) {
-        TestsMethodContextExtension.context().getStore(NAMESPACE).put("expected", expected);
+        TestMethodContextExtension.context().getStore(NAMESPACE).put("expected", expected);
     }
 
     public static BufferedImage getExpected() {
-        return TestsMethodContextExtension.context().getStore(NAMESPACE).get("expected", BufferedImage.class);
+        return TestMethodContextExtension.context().getStore(NAMESPACE).get("expected", BufferedImage.class);
     }
 
     public static void setActual(BufferedImage actual) {
-        TestsMethodContextExtension.context().getStore(NAMESPACE).put("actual", actual);
+        TestMethodContextExtension.context().getStore(NAMESPACE).put("actual", actual);
     }
 
     public static BufferedImage getActual() {
-        return TestsMethodContextExtension.context().getStore(NAMESPACE).get("actual", BufferedImage.class);
+        return TestMethodContextExtension.context().getStore(NAMESPACE).get("actual", BufferedImage.class);
     }
 
     public static void setDiff(BufferedImage diff) {
-        TestsMethodContextExtension.context().getStore(NAMESPACE).put("diff", diff);
+        TestMethodContextExtension.context().getStore(NAMESPACE).put("diff", diff);
     }
 
     public static BufferedImage getDiff() {
-        return TestsMethodContextExtension.context().getStore(NAMESPACE).get("diff", BufferedImage.class);
+        return TestMethodContextExtension.context().getStore(NAMESPACE).get("diff", BufferedImage.class);
     }
 
     private static byte[] imageToBytes(BufferedImage image) {

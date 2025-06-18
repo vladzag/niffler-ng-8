@@ -1,45 +1,38 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideDriver;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.User;
-import guru.qa.niffler.jupiter.converter.BrowserConverter;
-import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.jupiter.annotation.meta.WebTest;
+import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
 import guru.qa.niffler.page.ProfilePage;
-import guru.qa.niffler.utils.Browser;
-import guru.qa.niffler.utils.RandomDataUtils;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.converter.ConvertWith;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.api.Test;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
+import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
 import static guru.qa.niffler.utils.RandomDataUtils.randomName;
 
+@WebTest
 public class ProfileTest {
-
-    private static final String USER_PWRD = "12345";
-
 
     @User(
             categories = @Category(
                     archived = true
             )
     )
-    @ParameterizedTest
-    @EnumSource(Browser.class)
+    @Test
     @ApiLogin
-    void archivedCategoryShouldPresentInCategoriesList(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
-        final CategoryJson archivedCategory = user.testData().categories().getFirst();
+    void archivedCategoryShouldPresentInCategoriesList(UserJson user) {
+        final String categoryName = user.testData().categoryDescriptions()[0];
+
         Selenide.open(ProfilePage.URL, ProfilePage.class)
-                .checkArchivedCategoryExists(archivedCategory.name());
+                .checkArchivedCategoryExists(categoryName);
     }
 
     @User(
@@ -47,117 +40,78 @@ public class ProfileTest {
                     archived = false
             )
     )
-    @ParameterizedTest
-    @EnumSource(Browser.class)
+    @Test
     @ApiLogin
-    void activeCategoryShouldPresentInCategoriesList(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson userJson) {
+    void activeCategoryShouldPresentInCategoriesList(UserJson user) {
+        final String categoryName = user.testData().categoryDescriptions()[0];
+
         Selenide.open(ProfilePage.URL, ProfilePage.class)
-                .checkCategoryExists(String.valueOf(userJson.testData().categories().getFirst()));
+                .checkCategoryExists(categoryName);
     }
 
     @User
-    @ScreenShotTest("img/expected/expected-dog.png")
-    @ParameterizedTest
-    @EnumSource(Browser.class)
     @ApiLogin
-    void shouldUpdateProfileImageWhenUploadNewImage(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user, BufferedImage expected) throws IOException {
+    @ScreenShotTest(value = "img/expected-avatar.png")
+    void shouldUpdateProfileWithAllFieldsSet(UserJson user, BufferedImage expectedAvatar) throws IOException {
         final String newName = randomName();
 
-        Selenide.open(ProfilePage.URL, ProfilePage.class);
-
-        new MainPage(driver)
-                .goToProfilePage();
-        new ProfilePage(driver)
-                .uploadPhotoFromClasspath("img/dog.jpeg")
+        ProfilePage profilePage = Selenide.open(ProfilePage.URL, ProfilePage.class)
+                .uploadPhotoFromClasspath("img/cat.jpeg")
                 .setName(newName)
                 .submitProfile()
                 .checkAlertMessage("Profile successfully updated");
 
         Selenide.refresh();
 
-        new ProfilePage(driver).checkName(newName);
-
-    }
-
-    @User
-    @ScreenShotTest("img/expected/expected-scientist.png")
-    @ParameterizedTest
-    @EnumSource(Browser.class)
-    @ApiLogin
-    void shouldUpdateProfileImageWhenUpdateImage(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user, BufferedImage expected) throws IOException {
-        final String newName = randomName();
-
-        Selenide.open(ProfilePage.URL, ProfilePage.class);
-
-        new MainPage(driver)
-                .goToProfilePage();
-        new ProfilePage(driver)
-                .uploadPhotoFromClasspath("img/dog.jpeg")
-                .setName(newName)
-                .submitProfile()
-                .checkAlertMessage("Profile successfully updated");
-        Selenide.refresh();
-
-        new ProfilePage(driver)
-                .uploadPhotoFromClasspath("img/scientist.jpeg")
-                .submitProfile()
-                .checkAlertMessage("Profile successfully updated");
-
-        Selenide.refresh();
-
-        new ProfilePage(driver).checkName(newName)
+        profilePage.checkName(newName)
                 .checkPhotoExist()
-                .checkPhoto(expected);
-
+                .checkPhoto(expectedAvatar);
     }
 
     @User
-    @ParameterizedTest
-    @EnumSource(Browser.class)
+    @Test
     @ApiLogin
-    void userInfoShouldBeSavedAfterEditing(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
-        final String name = RandomDataUtils.randomName();
-        Selenide.open(ProfilePage.URL, ProfilePage.class);
-        new MainPage(driver)
-                .goToProfilePage();
-        new ProfilePage(driver)
-                .setName(name)
-                .checkName(name);
+    void shouldUpdateProfileWithOnlyRequiredFields(UserJson user) {
+        final String newName = randomName();
+
+        ProfilePage profilePage = Selenide.open(ProfilePage.URL, ProfilePage.class)
+                .setName(newName)
+                .submitProfile()
+                .checkAlertMessage("Profile successfully updated");
+
+        Selenide.refresh();
+
+        profilePage.checkName(newName);
+    }
+
+    @User
+    @Test
+    @ApiLogin
+    void shouldAddNewCategory(UserJson user) {
+        String newCategory = randomCategoryName();
+
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
+                .addCategory(newCategory)
+                .checkAlertMessage("You've added new category:")
+                .checkCategoryExists(newCategory);
     }
 
     @User(
             categories = {
-                    @Category(
-                            name = "Food",
-                            archived = false
-                    )
+                    @Category(name = "Food"),
+                    @Category(name = "Bars"),
+                    @Category(name = "Clothes"),
+                    @Category(name = "Friends"),
+                    @Category(name = "Music"),
+                    @Category(name = "Sports"),
+                    @Category(name = "Walks"),
+                    @Category(name = "Books")
             }
     )
-    @ParameterizedTest
-    @EnumSource(Browser.class)
+    @Test
     @ApiLogin
-    void userCategoriesShouldBeSavedAfterEditing(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
-        final String categoryName = user.testData().categories().get(0).name();
-        final String newName = RandomDataUtils.randomCategoryName();
-        Selenide.open(ProfilePage.URL, ProfilePage.class);
-        new MainPage(driver)
-                .goToProfilePage();
-        new ProfilePage(driver)
-                .checkCategoryExists(categoryName)
-                .editCategoryName(categoryName, newName)
-                .checkCategoryExists(newName);
-    }
-
-    @User
-    @ParameterizedTest
-    @EnumSource(Browser.class)
-    @ApiLogin
-    void successMessageShouldAppearAfterSavingProfileChanges(@ConvertWith(BrowserConverter.class) SelenideDriver driver, UserJson user) {
-        final String name = RandomDataUtils.randomName();
-        Selenide.open(ProfilePage.URL, ProfilePage.class);
-        new ProfilePage(driver)
-                .setName(name)
-                .submitProfile()
-                .checkAlertMessage("Profile successfully updated");
+    void shouldForbidAddingMoreThat8Categories(UserJson user) {
+        Selenide.open(ProfilePage.URL, ProfilePage.class)
+                .checkThatCategoryInputDisabled();
     }
 }

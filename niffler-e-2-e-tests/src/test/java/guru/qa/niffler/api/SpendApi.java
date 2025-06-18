@@ -1,8 +1,8 @@
 package guru.qa.niffler.api;
 
-import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.rest.CategoryJson;
+import guru.qa.niffler.model.rest.SpendJson;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -32,7 +32,7 @@ public interface SpendApi {
                                   @Query("to") String to);
 
   @DELETE("internal/spends/remove")
-  Call<String> removeSpends(@Query("username") String username, @Query("ids") List<String> ids);
+  Call<Void> removeSpends(@Query("username") String username, @Query("ids") List<String> ids);
 
   @POST("internal/categories/add")
   Call<CategoryJson> addCategory(@Body CategoryJson category);

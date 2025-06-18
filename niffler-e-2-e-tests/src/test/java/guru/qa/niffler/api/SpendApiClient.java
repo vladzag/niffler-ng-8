@@ -1,10 +1,10 @@
 package guru.qa.niffler.api;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.model.rest.CategoryJson;
 import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.SpendJson;
-import guru.qa.niffler.service.RestClient;
+import guru.qa.niffler.model.rest.SpendJson;
+import guru.qa.niffler.api.core.RestClient;
 import io.qameta.allure.Step;
 import io.qameta.allure.okhttp3.AllureOkHttp3;
 import okhttp3.OkHttpClient;

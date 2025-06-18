@@ -1,5 +1,5 @@
 package guru.qa.niffler.condition;
 
-public record Bubble(Colour colour,
+public record Bubble(Color color,
                      String text) {
 }

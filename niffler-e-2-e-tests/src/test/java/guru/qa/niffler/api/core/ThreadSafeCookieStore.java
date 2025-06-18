@@ -14,7 +14,7 @@ public enum ThreadSafeCookieStore implements CookieStore {
     );
 
     private CookieStore inMemoryCookieStore() {
-        return new CookieManager(null, null).getCookieStore();
+        return new CookieManager().getCookieStore();
     }
 
     @Override
@@ -22,10 +22,9 @@ public enum ThreadSafeCookieStore implements CookieStore {
         getStore().add(uri, cookie);
     }
 
-
     @Override
     public List<HttpCookie> get(URI uri) {
-        return getStore().getCookies();
+        return getStore().get(uri);
     }
 
     @Override
@@ -38,7 +37,6 @@ public enum ThreadSafeCookieStore implements CookieStore {
         return getStore().getURIs();
     }
 
-
     @Override
     public boolean remove(URI uri, HttpCookie cookie) {
         return getStore().remove(uri, cookie);
@@ -49,7 +47,7 @@ public enum ThreadSafeCookieStore implements CookieStore {
         return getStore().removeAll();
     }
 
-    public String cookieValue(String name){
+    public String cookieValue(String name) {
         return getCookies().stream()
                 .filter(c -> c.getName().equals(name))
                 .map(HttpCookie::getValue)

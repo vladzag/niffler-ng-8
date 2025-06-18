@@ -1,15 +1,31 @@
 package guru.qa.niffler.data.entity.userdata;
 
-import guru.qa.niffler.grpc.CurrencyValues;
-import guru.qa.niffler.model.UserJson;
-import jakarta.persistence.*;
+import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.model.rest.UserJson;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 @Getter
@@ -49,6 +65,13 @@ public class UserEntity implements Serializable {
 
     @OneToMany(mappedBy = "addressee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FriendshipEntity> friendshipAddressees = new ArrayList<>();
+
+    public UserEntity(UUID id) {
+        this.id = id;
+    }
+
+    public UserEntity() {
+    }
 
     public void addFriends(FriendshipStatus status, UserEntity... friends) {
         List<FriendshipEntity> friendsEntities = Stream.of(friends)
@@ -126,17 +149,4 @@ public class UserEntity implements Serializable {
     public final int hashCode() {
         return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
     }
-
-    @Override
-    public String toString() {
-        return "UserEntity{" + "\n" +
-                "id: " + id.toString() + "\n" +
-                "username: " + username + "\n" +
-                "currency: " + currency + "\n" +
-                "firstname: " + firstname + "\n" +
-                "surname: " + surname + "\n" +
-                "fullname: " + fullname + "\n" +
-                '}';
-    }
-
 }
