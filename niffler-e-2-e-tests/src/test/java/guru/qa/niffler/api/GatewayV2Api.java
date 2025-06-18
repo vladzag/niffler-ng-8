@@ -14,6 +14,7 @@ public interface GatewayV2Api {
     Call<RestResponsePage<UserJson>> allFriends(@Header("Authorization") String bearerToken,
                                                 @Query("page") int page,
                                                 @Query("size") int size,
+                                                @Query("sort") String sort,
                                                 @Query("searchQuery") @Nullable String searchQuery);
 
 }

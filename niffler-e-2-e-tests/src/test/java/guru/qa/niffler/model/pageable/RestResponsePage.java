@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +25,16 @@ public class RestResponsePage<T> extends PageImpl<T> {
                             @JsonProperty("first") boolean first,
                             @JsonProperty("numberOfElements") int numberOfElements,
                             @JsonProperty("empty") boolean empty) {
-        super(content, PageRequest.of(number, size), totalElements);
+        super(content, PageRequest.of(
+                        number,
+                        size,
+                        "".equals(sort.asText()) ? Sort.by(Sort.Direction.ASC, "username")
+                                : Sort.by(
+                                sort.asText().split(",")[1],
+                                sort.asText().split(",")[0]
+                        )
+                ), totalElements
+        );
     }
 
     public RestResponsePage(List<T> content, Pageable pageable, long total) {
