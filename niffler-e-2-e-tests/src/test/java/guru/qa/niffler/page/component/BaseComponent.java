@@ -2,13 +2,20 @@ package guru.qa.niffler.page.component;
 
 import com.codeborne.selenide.SelenideElement;
 
-public abstract class BaseComponent<T extends BaseComponent<?>> {
-    protected SelenideElement self;
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
-    public BaseComponent(SelenideElement self) {
+@ParametersAreNonnullByDefault
+public abstract class BaseComponent<T extends BaseComponent<?>> {
+
+    protected final SelenideElement self;
+
+    protected BaseComponent(SelenideElement self) {
         this.self = self;
     }
 
-    protected BaseComponent() {
+    @Nonnull
+    public SelenideElement getSelf() {
+        return self;
     }
 }

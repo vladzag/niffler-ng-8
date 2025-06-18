@@ -1,10 +1,9 @@
 package guru.qa.niffler.api.core;
 
-import com.github.jknack.handlebars.internal.lang3.StringUtils;
 import guru.qa.niffler.jupiter.extension.ApiLoginExtension;
 import okhttp3.Interceptor;
-import okhttp3.Request;
 import okhttp3.Response;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

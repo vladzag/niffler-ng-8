@@ -2,137 +2,96 @@ package guru.qa.niffler.page;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.extension.ScreenShotTestExtension;
 import guru.qa.niffler.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
 
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Objects;
 
-import static com.codeborne.selenide.Condition.*;
+import static com.codeborne.selenide.Condition.attributeMatching;
+import static com.codeborne.selenide.Condition.disabled;
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.value;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
-public class ProfilePage extends BasePage {
+@ParametersAreNonnullByDefault
+public class ProfilePage extends BasePage<ProfilePage> {
 
-    public static final String URL = Config.getInstance().frontUrl() + "profile";
+    public static final String URL = CFG.frontUrl() + "profile";
 
-    private final SelenideElement avatar;
-    private final SelenideElement userName;
-    private final SelenideElement nameInput;
-    private final SelenideElement photoInput;
-    private final SelenideElement submitButton;
-    private final SelenideElement categoryInput;
-    private final SelenideElement archivedSwitcher;
-    private final ElementsCollection bubbles;
-    private final ElementsCollection bubblesArchived;
-    private final SelenideElement profilePic;
-    private final SelenideElement editCategoryInput;
+    private final SelenideElement avatar = $("#image__input").parent().$("img");
+    private final SelenideElement userName = $("#username");
+    private final SelenideElement nameInput = $("#name");
+    private final SelenideElement photoInput = $("input[type='file']");
+    private final SelenideElement submitButton = $("button[type='submit']");
+    private final SelenideElement categoryInput = $("input[name='category']");
+    private final SelenideElement archivedSwitcher = $(".MuiSwitch-input");
 
+    private final ElementsCollection bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
+    private final ElementsCollection bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
 
-    public ProfilePage(SelenideDriver driver) {
-        this.avatar = $("#image__input").parent().$("img");
-        this.userName = $("#username");
-        this.nameInput = $("#name");
-        this.photoInput = $("input[type='file']");
-        this.submitButton = $("button[type='submit']");
-        this.categoryInput = $("input[name='category']");
-        this.archivedSwitcher = $(".MuiSwitch-input");
-        this.bubbles = $$(".MuiChip-filled.MuiChip-colorPrimary");
-        this.bubblesArchived = $$(".MuiChip-filled.MuiChip-colorDefault");
-        this.profilePic = $(By.xpath("//img[contains(@src, 'data:image/jpeg')]"));
-        this.editCategoryInput = $("input[placeholder='Edit category']");
-
-    }
-
-    @Step("Установить имя: {name}")
+    @Step("Set name: '{0}'")
+    @Nonnull
     public ProfilePage setName(String name) {
         nameInput.clear();
         nameInput.setValue(name);
         return this;
     }
 
-    @Step("Загрузить фото из пути класса: {path}")
+    @Step("Upload photo from classpath")
+    @Nonnull
     public ProfilePage uploadPhotoFromClasspath(String path) {
         photoInput.uploadFromClasspath(path);
         return this;
     }
 
-    @Step("Добавить категорию: {category}")
+    @Step("Set category: '{0}'")
+    @Nonnull
     public ProfilePage addCategory(String category) {
         categoryInput.setValue(category).pressEnter();
         return this;
     }
 
-    @Step("Проверить наличие категории: {category}")
+    @Step("Check category: '{0}'")
+    @Nonnull
     public ProfilePage checkCategoryExists(String category) {
         bubbles.find(text(category)).shouldBe(visible);
         return this;
     }
 
-    @Step("Проверить наличие архивной категории: {category}")
+    @Step("Check archived category: '{0}'")
+    @Nonnull
     public ProfilePage checkArchivedCategoryExists(String category) {
         archivedSwitcher.click();
         bubblesArchived.find(text(category)).shouldBe(visible);
         return this;
     }
 
-    @Step("Проверить имя пользователя: {username}")
+    @Step("Check userName: '{0}'")
+    @Nonnull
     public ProfilePage checkUsername(String username) {
         this.userName.should(value(username));
         return this;
     }
 
-    @Step("Проверить имя: {name}")
+    @Step("Check name: '{0}'")
+    @Nonnull
     public ProfilePage checkName(String name) {
         nameInput.shouldHave(value(name));
         return this;
     }
 
-    @Step("Проверить наличие фото")
-    public ProfilePage checkPhotoExist() {
-        avatar.should(attributeMatching("src", "data:image.*"));
-        return this;
-    }
-
-    @Step("Проверить, что ввод категории недоступен")
-    public ProfilePage checkThatCategoryInputDisabled() {
-        categoryInput.should(disabled);
-        return this;
-    }
-
-    @Step("Отправить профиль")
-    public ProfilePage submitProfile() {
-        submitButton.click();
-        return this;
-    }
-
-    @Step("Обновить категорию: {category}")
-    public ProfilePage updateCategory(String category) {
-        SelenideElement row = bubbles.find(text(category));
-        row.sibling(0).$("button[aria-label='Archive category']").click();
-        $(By.xpath("//button[text() = 'Archive']")).shouldBe(visible).click();
-        return this;
-    }
-
-    @Step("Получить элемент изображения профиля")
-    public SelenideElement getProfilePic() {
-        return profilePic;
-    }
-
-    @Step("Проверить сообщение об ошибке: {errorMessage}")
-    public ProfilePage checkAlertMessage(String errorMessage) {
-        $(".form__error").shouldHave(text(errorMessage));
-        return this;
-    }
-
-    @Step("Проверить сходство фото с ожидаемым изображением")
+    @Step("Check photo")
+    @Nonnull
     public ProfilePage checkPhoto(BufferedImage expected) throws IOException {
         Selenide.sleep(1000);
         BufferedImage actualImage = ImageIO.read(Objects.requireNonNull(avatar.screenshot()));
@@ -140,18 +99,37 @@ public class ProfilePage extends BasePage {
                 new ScreenDiffResult(
                         actualImage, expected
                 ),
-                "Несоответствие изображений"
+                ScreenShotTestExtension.ASSERT_SCREEN_MESSAGE
         );
         return this;
     }
-    @Step("Редактируем имя категории {newName}")
-    public ProfilePage editCategoryName(String nameToUpdate, String newName) {
-        bubbles.find(text(nameToUpdate))
-                .sibling(0)
-                .$("button[aria-label='Edit category']")
-                .click();
-        editCategoryInput.setValue(newName)
-                .pressEnter();
+
+    @Step("Check photo exist")
+    @Nonnull
+    public ProfilePage checkPhotoExist() {
+        avatar.should(attributeMatching("src", "data:image.*"));
+        return this;
+    }
+
+    @Step("Check that category input is disabled")
+    @Nonnull
+    public ProfilePage checkThatCategoryInputDisabled() {
+        categoryInput.should(disabled);
+        return this;
+    }
+
+    @Step("Save profile")
+    @Nonnull
+    public ProfilePage submitProfile() {
+        submitButton.click();
+        return this;
+    }
+
+    @Override
+    @Step("Check that page is loaded")
+    @Nonnull
+    public ProfilePage checkThatPageLoaded() {
+        userName.should(visible);
         return this;
     }
 }

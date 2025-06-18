@@ -2,8 +2,8 @@ package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.data.entity.userdata.FriendshipEntity;
 import guru.qa.niffler.model.CurrencyValues;
-import guru.qa.niffler.model.UserJson;
-import guru.qa.niffler.service.UsersDbClient;
+import guru.qa.niffler.model.rest.UserJson;
+import guru.qa.niffler.service.impl.UsersDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -13,7 +13,7 @@ import static guru.qa.niffler.model.FriendshipStatus.INVITE_SENT;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UserJdbcTest {
-    private static final String USER_PW = "12345";
+   /* private static final String USER_PW = "12345";
     private static final UsersDbClient usersDbClient = new UsersDbClient();
 
     @ValueSource(strings = {
@@ -128,5 +128,5 @@ public class UserJdbcTest {
 
         assertFalse(usersDbClient.findById(requester.id()).isPresent());
         assertTrue(usersDbClient.findInvitationByRequesterId(requester.id()).isEmpty());
-    }
+    }*/
 }

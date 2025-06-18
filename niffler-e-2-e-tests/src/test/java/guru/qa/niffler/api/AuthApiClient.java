@@ -3,8 +3,8 @@ package guru.qa.niffler.api;
 import com.fasterxml.jackson.databind.JsonNode;
 import guru.qa.niffler.api.core.ThreadSafeCookieStore;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.extension.TestsMethodContextExtension;
-import guru.qa.niffler.service.RestClient;
+import guru.qa.niffler.jupiter.extension.TestMethodContextExtension;
+import guru.qa.niffler.api.core.RestClient;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import retrofit2.Response;
 
@@ -76,7 +76,7 @@ public class AuthApiClient extends RestClient {
             throw new AssertionError(e);
         }
 
-        TestsMethodContextExtension.context()
+        TestMethodContextExtension.context()
                 .getStore(ExtensionContext.Namespace.create(AuthApiClient.class))
                 .put(
                         "code",

@@ -1,59 +1,71 @@
 package guru.qa.niffler.page;
 
-import com.codeborne.selenide.SelenideDriver;
 import com.codeborne.selenide.SelenideElement;
-import guru.qa.niffler.config.Config;
 import io.qameta.allure.Step;
+
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 
-public class LoginPage extends BasePage {
-    public static final String URL = Config.getInstance().authUrl() + "login";
+@ParametersAreNonnullByDefault
+public class LoginPage extends BasePage<LoginPage> {
 
+    public static final String URL = CFG.authUrl() + "login";
 
-    private final SelenideElement usernameInput;
-    private final SelenideElement passwordInput;
-    private final SelenideElement submitButton ;
-    private final SelenideElement registerButton;
-    private final SelenideElement errorContainer;
+    private final SelenideElement usernameInput = $("input[name='username']");
+    private final SelenideElement passwordInput = $("input[name='password']");
+    private final SelenideElement submitButton = $("button[type='submit']");
+    private final SelenideElement registerButton = $("a[href='/register']");
+    private final SelenideElement errorContainer = $(".form__error");
 
-    public LoginPage(SelenideDriver driver) {
-        this.usernameInput = driver.$("input[name='username']");
-        this.passwordInput = driver.$("input[name='password']");
-        this.submitButton = driver.$("button[type='submit']");
-        this.registerButton = driver.$("a[href='/register']");
-        this.errorContainer = driver.$(".form__error");
-
-    }
-
-    @Step("Регистрация нового пользователя")
-    public void doRegister() {
+    @Nonnull
+    public RegisterPage doRegister() {
         registerButton.click();
+        return new RegisterPage();
     }
 
-    @Step("Успешный вход в систему для пользователя {username}")
-    public LoginPage successLogin(String username, String password) {
-        login(username, password);
+    @Step("Fill login page with credentials: username: '{0}', password: {1}")
+    @Nonnull
+    public LoginPage fillLoginPage(String login, String password) {
+        setUsername(login);
+        setPassword(password);
         return this;
     }
 
-    @Step("Вход в систему с использованием имени пользователя {username} и пароля")
-    public LoginPage login(String username, String password) {
+    @Step("Set username: '{0}'")
+    @Nonnull
+    public LoginPage setUsername(String username) {
         usernameInput.setValue(username);
-        passwordInput.setValue(password);
-        submitButton.click();
         return this;
     }
 
-    @Step("Проверка ошибки: {error}")
+    @Step("Set password: '{0}'")
+    @Nonnull
+    public LoginPage setPassword(String password) {
+        passwordInput.setValue(password);
+        return this;
+    }
+
+    @Step("Submit login")
+    @Nonnull
+    public <T extends BasePage<?>> T submit(T expectedPage) {
+        submitButton.click();
+        return expectedPage;
+    }
+
+    @Step("Check error on page: {error}")
+    @Nonnull
     public LoginPage checkError(String error) {
         errorContainer.shouldHave(text(error));
         return this;
     }
 
-    @Step("Проверка загрузки страницы авторизации")
+    @Override
+    @Step("Check that page is loaded")
+    @Nonnull
     public LoginPage checkThatPageLoaded() {
         usernameInput.should(visible);
         passwordInput.should(visible);

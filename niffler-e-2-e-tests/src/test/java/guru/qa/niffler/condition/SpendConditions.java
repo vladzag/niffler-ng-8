@@ -1,7 +1,7 @@
 package guru.qa.niffler.condition;
 
 import com.codeborne.selenide.*;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.rest.SpendJson;
 import org.apache.commons.lang.ArrayUtils;
 import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebElement;

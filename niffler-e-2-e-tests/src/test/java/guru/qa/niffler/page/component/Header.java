@@ -1,55 +1,77 @@
 package guru.qa.niffler.page.component;
 
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.EditSpendingPage;
+import guru.qa.niffler.page.FriendsPage;
+import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.MainPage;
+import guru.qa.niffler.page.PeoplePage;
+import guru.qa.niffler.page.ProfilePage;
 import io.qameta.allure.Step;
+
+import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 
-public class Header extends BaseComponent {
-    private final SelenideElement menuBtn = self.$("button");
-    private final SelenideElement headerMenu = $("ul[role='menu']");
+@ParametersAreNonnullByDefault
+public class Header extends BaseComponent<Header> {
 
-    public Header(SelenideElement self) {
+    public Header() {
         super($("#root header"));
     }
 
-    @Step("Проверяем содержимое шапки страницы")
-    public void checkHeaderText() {
-        self.$("h1").shouldHave(text("Niffler"));
-    }
+    private final SelenideElement mainPageLink = self.$("a[href*='/main']");
+    private final SelenideElement addSpendingBtn = self.$("a[href*='/spending']");
+    private final SelenideElement menuBtn = self.$("button");
+    private final SelenideElement menu = $("ul[role='menu']");
+    private final ElementsCollection menuItems = menu.$$("li");
 
-    @Step("Переходим на страницу Friends")
-    public void toFriendsPage() {
+    @Step("Open Friends page")
+    @Nonnull
+    public FriendsPage toFriendsPage() {
         menuBtn.click();
-        headerMenu.$$("li").find(text("Friends")).click();
+        menuItems.find(text("Friends")).click();
+        return new FriendsPage();
     }
 
-    @Step("Переходим на страницу All People")
-    public void toAllPeoplesPage() {
+    @Step("Open All Peoples page")
+    @Nonnull
+    public PeoplePage toAllPeoplesPage() {
         menuBtn.click();
-        headerMenu.$$("li").find(text("All People")).click();
+        menuItems.find(text("All People")).click();
+        return new PeoplePage();
     }
 
-    @Step("Переходим на  страницу Profile")
-    public void toProfilePage() {
+    @Step("Open Profile page")
+    @Nonnull
+    public ProfilePage toProfilePage() {
         menuBtn.click();
-        headerMenu.$$("li").find(text("Profile")).click();
+        menuItems.find(text("Profile")).click();
+        return new ProfilePage();
     }
 
-    @Step("Делаем Log out")
-    public void signOut() {
+    @Step("Sign out")
+    @Nonnull
+    public LoginPage signOut() {
         menuBtn.click();
-        headerMenu.$$("li").find(text("Sign out")).click();
+        menuItems.find(text("Sign out")).click();
+        return new LoginPage();
     }
 
-    @Step("Добавляем новый Spend")
-    public void addSpendingPage() {
-        self.$("a[href='/spending']").click();
+    @Step("Add new spending")
+    @Nonnull
+    public EditSpendingPage addSpendingPage() {
+        addSpendingBtn.click();
+        return new EditSpendingPage();
     }
 
-    @Step("Переходим на  главную страницу")
-    public void toMainPage() {
-        self.$("a[href='/main']").click();
+    @Step("Go to main page")
+    @Nonnull
+    public MainPage toMainPage() {
+        mainPageLink.click();
+        return new MainPage();
     }
 }
