@@ -41,7 +41,7 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
         this.setupBrowser = true;
     }
 
-    public static ApiLoginExtension restApiLoginExtension() {
+    public static ApiLoginExtension rest() {
         return new ApiLoginExtension(false);
     }
 
