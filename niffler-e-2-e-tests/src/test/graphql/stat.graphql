@@ -11,3 +11,12 @@ query Stat($filterPeriod: FilterPeriod, $filterCurrency: CurrencyValues, $statCu
         }
     }
 }
+query Categories {
+    user {
+        categories {
+            id
+            name
+            archived
+        }
+    }
+}
