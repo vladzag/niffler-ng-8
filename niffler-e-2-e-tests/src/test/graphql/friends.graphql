@@ -1,0 +1,95 @@
+query FriendsCategory{
+    user {
+        username
+        categories {
+            name
+        }
+        friends(page: 0, size: 1) {
+            edges {
+                node {
+                    username
+                    friendshipStatus
+                    categories {
+                        name
+                    }
+                }
+            }
+            pageInfo {
+                hasPreviousPage
+                hasNextPage
+            }
+        }
+    }
+}
+
+query FriendsOfFriendsRecursive{
+    user {
+        username
+        friends(page: 0, size: 10) {
+            edges {
+                node {
+                    username
+                    friendshipStatus
+                    friends(page: 0, size: 10) {
+                        edges {
+                            node {
+                                username
+                                friendshipStatus
+                                friends(page: 0, size: 10) {
+                                    edges {
+                                        node {
+                                            username
+                                            friendshipStatus
+                                        }
+                                    }
+                                    pageInfo {
+                                        hasPreviousPage
+                                        hasNextPage
+                                    }
+                                }
+                            }
+                        }
+                        pageInfo {
+                            hasPreviousPage
+                            hasNextPage
+                        }
+                    }
+                }
+            }
+            pageInfo {
+                hasPreviousPage
+                hasNextPage
+            }
+        }
+    }
+}
+
+query FriendsOfFriends{
+    user {
+        username
+        friends(page: 0, size: 10) {
+            edges {
+                node {
+                    username
+                    friendshipStatus
+                    friends(page: 0, size: 10) {
+                        edges {
+                            node {
+                                username
+                                friendshipStatus
+                            }
+                        }
+                        pageInfo {
+                            hasPreviousPage
+                            hasNextPage
+                        }
+                    }
+                }
+            }
+            pageInfo {
+                hasPreviousPage
+                hasNextPage
+            }
+        }
+    }
+}
