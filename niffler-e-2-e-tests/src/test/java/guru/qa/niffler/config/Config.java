@@ -41,4 +41,17 @@ public interface Config {
     default String ghUrl() {
         return "https://api.github.com/";
     }
+
+    @Nonnull
+    String currencyGrpcAddress();
+    default int currencyGrpcPort() {
+        return 8092;
+    }
+
+    @Nonnull
+    String userdataGrpcAddress();
+
+    default int userdataGrpcPort() {
+        return 8094;
+    }
 }
