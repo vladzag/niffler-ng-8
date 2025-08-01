@@ -61,6 +61,7 @@ enum LocalConfig implements Config {
     public String currencyJdbcUrl() {
         return "jdbc:postgresql://127.0.0.1:5432/niffler-currency";
     }
+
     @NotNull
     @Override
     public String currencyGrpcAddress() {
@@ -71,5 +72,10 @@ enum LocalConfig implements Config {
     @Override
     public String userdataGrpcAddress() {
         return "127.0.0.1";
+    }
+
+    @Override
+    public String allureDockerServiceUrl() {
+        return "http://127.0.0.1:5050/";
     }
 }

@@ -44,6 +44,7 @@ public interface Config {
 
     @Nonnull
     String currencyGrpcAddress();
+
     default int currencyGrpcPort() {
         return 8092;
     }
@@ -54,4 +55,7 @@ public interface Config {
     default int userdataGrpcPort() {
         return 8094;
     }
+
+    @Nonnull
+    String allureDockerServiceUrl();
 }

@@ -2,8 +2,10 @@ package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.api.AuthApiClient;
 import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.jupiter.extension.ApiLoginExtension;
 import guru.qa.niffler.model.rest.UserJson;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import guru.qa.niffler.jupiter.extension.TestMethodContextExtension;
 
@@ -16,6 +18,7 @@ public class OAuthTest {
 
     @User
     @Test
+    @ExtendWith(ApiLoginExtension.class)
     public void oAuthTest(UserJson user) {
         final String codeVerifier = generateCodeVerifier();
         final String codeChallenge = generateCodeChallange(codeVerifier);
