@@ -1,0 +1,26 @@
+{
+  "request": {
+    "method": "GET",
+    "url": "/internal/categories/all?username=bee&excludeArchived=false"
+  },
+  "response": {
+    "status": 200,
+    "jsonBody": [
+      {
+        "id":"3e8c07cd-b79c-4036-abd9-5f1cdcf123d8",
+        "name":"Веселье",
+        "username":"bee",
+        "archived":false
+      },
+      {
+        "id":"357ed0ec-8018-11ef-86dd-0242ac110002",
+        "name":"Магазины",
+        "username":"bee",
+        "archived":true
+      }
+    ],
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}
