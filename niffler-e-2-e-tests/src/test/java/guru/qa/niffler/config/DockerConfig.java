@@ -60,6 +60,7 @@ enum DockerConfig implements Config {
     public String currencyJdbcUrl() {
         return "";
     }
+
     @NotNull
     @Override
     public String currencyGrpcAddress() {
@@ -70,5 +71,11 @@ enum DockerConfig implements Config {
     @Override
     public String userdataGrpcAddress() {
         return "";
+    }
+
+    @NotNull
+    @Override
+    public String kafkaAddress() {
+        return "kafka:9092";
     }
 }

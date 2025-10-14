@@ -72,4 +72,9 @@ enum LocalConfig implements Config {
     public String userdataGrpcAddress() {
         return "127.0.0.1";
     }
+    @NotNull
+    @Override
+    public String kafkaAddress() {
+        return "127.0.0.1:9092";
+    }
 }
